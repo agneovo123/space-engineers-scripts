@@ -193,9 +193,12 @@ namespace IngameScript
                 motor.SetValueFloat("Velocity", Math.Min((float)(mod - motorCurrentAngle + (ang % mod)) * 6f, 60));
                 //motor.SetValueFloat("LowerLimit", (float)(ang % mod));
                 //motor.SetValueFloat("UpperLimit", (float)(ang % mod));
-                aHorizDifference += mod;
+                if (!righttriggered)
+                {
+                    aHorizDifference += mod;
+                }
                 righttriggered = true;
-                if (ang < 360)
+                if (motor.Angle < 60)
                 {
                     righttriggered = false;
                 }
