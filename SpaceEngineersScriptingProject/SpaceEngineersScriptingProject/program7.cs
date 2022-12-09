@@ -22,6 +22,9 @@ namespace IngameScript
 {
     partial class program7 : MyGridProgram
     {
+        //////////////////////////////////////////////////
+        // Code based on <name here>'s gravity based gun stabilizer
+        //////////////////////////////////////////////////
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
@@ -51,13 +54,9 @@ namespace IngameScript
                 y = Control.WorldMatrix.Right;
                 z = Control.WorldMatrix.Up;
 
-                //double dx = GetADif(ax, x);
-                //double dy = GetADif(ay, y);
-                //double dz = GetADif(az, z);
                 double dx = GetADif(xp, x);
                 double dy = GetADif(yp, y);
                 double dz = GetADif(zp, z);
-
 
                 if (double.IsNaN(aVertDifference))
                 {
@@ -107,15 +106,12 @@ namespace IngameScript
                 debugLCD.WriteText("\n Vert.Angle: " + ToDeg(Vert.Angle), true);
                 debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
 
-
                 timer++;
                 if (timer > 80) { timer = 0; }
                 if (timer < 20) { Echo("Xionphs stabilized mouse-turret script \n status: running"); }
-                else if (timer < 40) { Echo("Xionphs stabilized mouse-turret script \n status: running ."); }
-                else if (timer < 60) { Echo("Xionphs stabilized mouse-turret script \n status: running .."); }
-                else if (timer < 80)
+                else if (timer < 40)
                 {
-                    Echo("Xionphs stabilized mouse-turret script \n status: running ..."); 
+                    Echo("Xionphs stabilized mouse-turret script \n status: running .");
                     if (firstSetup)
                     {
                         firstSetup = false;
@@ -123,7 +119,8 @@ namespace IngameScript
                         Vert.ApplyAction("OnOff_On");
                     }
                 }
-                
+                else if (timer < 60) { Echo("Xionphs stabilized mouse-turret script \n status: running .."); }
+                else if (timer < 80) { Echo("Xionphs stabilized mouse-turret script \n status: running ..."); }
             }
             else
             {
