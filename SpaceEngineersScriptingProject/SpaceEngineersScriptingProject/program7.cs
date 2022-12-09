@@ -181,25 +181,31 @@ namespace IngameScript
             }
             motor.SetValueFloat("Velocity", (float)(ang - motorCurrentAngle) * 6f);
         }
+        bool righttriggered = false;
         public void Angle2(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
             double motorCurrentAngle = ToDeg(motor.Angle);
             double mod = 360;
             debugLCD.WriteText("\n", true);
             debugLCD.WriteText("\n ang: " + ang, true);
-            if (ang > 360)
+            if (ang > 360 || righttriggered)
             {
                 motor.SetValueFloat("Velocity", Math.Min((float)(mod - motorCurrentAngle + (ang % mod)) * 6f, 60));
-                motor.SetValueFloat("LowerLimit", (float)(ang % mod));
-                motor.SetValueFloat("UpperLimit", (float)(ang % mod));
+                //motor.SetValueFloat("LowerLimit", (float)(ang % mod));
+                //motor.SetValueFloat("UpperLimit", (float)(ang % mod));
                 aHorizDifference += mod;
+                righttriggered = true;
+                if (ang < 360)
+                {
+                    righttriggered = false;
+                }
                 return;
             }
             if (ang < -360)
             {
                 motor.SetValueFloat("Velocity", Math.Min((float)(mod + motorCurrentAngle - (Math.Abs(ang) % mod)) * 6f, 60));
-                motor.SetValueFloat("LowerLimit", (float)(ang % mod));
-                motor.SetValueFloat("UpperLimit", (float)(ang % mod));
+                //motor.SetValueFloat("LowerLimit", (float)(ang % mod));
+                //motor.SetValueFloat("UpperLimit", (float)(ang % mod));
                 aHorizDifference -= mod;
                 return;
             }
