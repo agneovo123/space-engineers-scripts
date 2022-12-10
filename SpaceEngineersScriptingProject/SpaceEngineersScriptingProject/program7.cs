@@ -37,7 +37,6 @@ namespace IngameScript
         IMyShipController Control;
         IMyMotorStator Horiz, Vert;
         IMyTextPanel debugLCD;
-        IMySmallGatlingGun Gun;
         int timer;
         Vector3D x, y, z, w, //forward, right up, left
             xp, yp, zp; //previous vectors
@@ -122,13 +121,11 @@ namespace IngameScript
                 Control = (IMyShipController)GetBlock("aDriver");
                 Horiz = (IMyMotorStator)GetBlock("Rotor Horiz");
                 Vert = (IMyMotorStator)GetBlock("Rotor Vert");
-                Gun = (IMySmallGatlingGun)GetBlock("Elite Gatling Gun");
                 debugLCD = (IMyTextPanel)GetBlock("LCD");
                 if (Control == null) { Echo("ShipController with the name `aDriver` is missing."); }
                 if (Vert == null) { Echo("Rotor with the name `Elevation` is missing."); }
                 if (Horiz == null) { Echo("Rotor with the name `Azimuth` is missing."); }
                 if (debugLCD == null) { Echo("LCD with the name `LCD` is missing."); }
-                if (Gun == null) { Echo("Gun with the name `Elite Gatling Gun` is missing."); }
                 if (!errors) { 
                     setup = true;
                     angleVert = 0;
