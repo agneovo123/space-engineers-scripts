@@ -96,14 +96,14 @@ namespace IngameScript
 
                 timer++;
                 if (timer > 80) { timer = 0; }
-                if (timer < 20) { Echo("Xionphs stabilized mouse-turret script \n status: running"); }
+                if (timer < 20) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning"); }
                 else if (timer < 40)
                 {
-                    Echo("Xionphs stabilized mouse-turret script \n status: running .");
+                    Echo("Agneovo's 2 plane gun stabilizer script \nrunning .");
                     if (firstSetup) { firstSetup = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); } // turns rotors back on after 20 ticks
                 }
-                else if (timer < 60) { Echo("Xionphs stabilized mouse-turret script \n status: running .."); }
-                else if (timer < 80) { Echo("Xionphs stabilized mouse-turret script \n status: running ..."); }
+                else if (timer < 60) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning .."); }
+                else if (timer < 80) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning ..."); }
             }
             else
             {
