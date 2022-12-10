@@ -31,9 +31,7 @@ namespace IngameScript
         double verticalSpeedLimit = 60; // value: 0 to 60
 
         bool setup, errors, firstSetup = true, rightOverTurn = false, leftOverTurn = false;
-        double angleVert, angleHoriz;
-        double aVertDifference = 0;
-        double aHorizDifference = 0;
+        double angleVert, angleHoriz, aVertDifference, aHorizDifference;
         IMyShipController Control;
         IMyMotorStator Horiz, Vert;
         IMyTextPanel debugLCD;
@@ -128,10 +126,11 @@ namespace IngameScript
                 if (debugLCD == null) { Echo("LCD with the name `LCD` is missing."); }
                 if (!errors) { 
                     setup = true;
-                    angleVert = 0;
-                    angleHoriz = 0;
-                    aVertDifference = 0;
-                    aHorizDifference = 0;
+                    firstSetup = true;
+                    //angleVert = 0;
+                    //angleHoriz = 0;
+                    //aVertDifference = 0;
+                    //aHorizDifference = 0;
                     Horiz.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
                     Vert.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
                 }
@@ -179,12 +178,12 @@ namespace IngameScript
                 motor.SetValueFloat("LowerLimit", (float)ang);
                 motor.SetValueFloat("UpperLimit", (float)highLimit);
             }
-            motor.SetValueFloat("Velocity", (float)(ang - motorCurrentAngle) * 6f);
+            motor.SetValueFloat("Velocity", (float)ClampVSpeed((ang - motorCurrentAngle) * 6f));
         }
         public void Angle2(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
             double mod = 360;
-            double motorCurrentAngle = ToDeg(motor.Angle) % mod;
+            double motorCurrentAngle = ToDeg(motor.Angle);
             debugLCD.WriteText("\n", true);
             debugLCD.WriteText("\n ang: " + ang, true);
             debugLCD.WriteText("\n motorCurrentAngle: " + motorCurrentAngle, true);
@@ -194,6 +193,7 @@ namespace IngameScript
             debugLCD.WriteText("\n righttriggered: " + rightOverTurn, true);
             if (ang > 360 || rightOverTurn)
             {
+                motorCurrentAngle %= mod;
                 motor.SetValueFloat("Velocity", (float)ClampHSpeed((mod - motorCurrentAngle + (ang % mod)) * 6f));
                 motor.SetValueFloat("LowerLimit", float.MinValue);
                 motor.SetValueFloat("UpperLimit", float.MaxValue);
@@ -210,6 +210,7 @@ namespace IngameScript
             }
             if (ang < -360 || leftOverTurn)
             {
+                motorCurrentAngle = -(motorCurrentAngle % mod);
                 motor.SetValueFloat("Velocity", (float)ClampHSpeed((motorCurrentAngle - mod - (ang % mod)) * 6f));
                 motor.SetValueFloat("LowerLimit", float.MinValue);
                 motor.SetValueFloat("UpperLimit", float.MaxValue);
@@ -228,17 +229,11 @@ namespace IngameScript
             {
                 motor.SetValueFloat("LowerLimit", (float)0);
                 motor.SetValueFloat("UpperLimit", (float)0);
-                //ang %= mod;
-                //motorCurrentAngle %= mod;
-                //angleHoriz %= mod;
             }
             else if (ang <= lowLimit)
             {
                 motor.SetValueFloat("LowerLimit", (float)-0);
                 motor.SetValueFloat("UpperLimit", (float)-0);
-                //ang %= mod;
-                //motorCurrentAngle %= mod;
-                //angleHoriz %= mod;
             }
             else if (ang > motorCurrentAngle)
             {
