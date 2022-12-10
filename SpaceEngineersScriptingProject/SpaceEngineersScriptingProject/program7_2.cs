@@ -28,17 +28,27 @@ namespace IngameScript
         //              EDITABLE VARIABLES:                  //
         ///////////////////////////////////////////////////////
 
-        const double sensitivity = 0.05; // sets your sensitivity
-        const double horizontalSpeedLimit = 60; // value: 0 to 60
-        const double verticalSpeedLimit = 60; // value: 0 to 60
-        const double limitLeft = 360; // how much the turret can turn left (set to 360 to make it unlimited)
-        const double limitRight = 360; // how much the turret can turn right (set to 360 to make it unlimited)
-        const double limitUp = 40; // how much the turret can turn up (set to 360 to make it unlimited)
-        const double limitDown = 12; // how much the turret can turn down (set to 360 to make it unlimited)
+        // sets your sensitivity
+        const double sensitivity = 0.05;
+        // how fast the horizontal rotor can go value: 0 to 60
+        const double horizontalSpeedLimit = 60;
+        // how fast the vertical rotor can go value: 0 to 60
+        const double verticalSpeedLimit = 60;
+        // how much the turret can turn left (set to 360 to make it unlimited)
+        const double limitLeft = 360;
+        // how much the turret can turn right (set to 360 to make it unlimited)
+        const double limitRight = 360;
+        // how much the turret can turn up (set to 360 to make it unlimited)
+        const double limitUp = 40;
+        // how much the turret can turn down (set to 360 to make it unlimited)
+        const double limitDown = 12;
 
-        const string CockpitName = "aTankDriver"; // the name of your regular/industrial/rover/buggy cockpit
-        const string HorizName = "Rotor Horizontal"; // the name of your horizontal (left-right) rotor
-        const string VertName = "Rotor Vertical"; // the name of your vertical (up-down) rotor
+        // the name of your regular/industrial/rover/buggy cockpit
+        const string CockpitName = "aTankDriver";
+        // the name of your horizontal (left-right) rotor
+        const string HorizName = "Rotor Horizontal";
+        // the name of your vertical (up-down) rotor
+        const string VertName = "Rotor Vertical";
 
         ////////////////////////////////////////////////////////////////////////////////
         //   DO NOT EDIT ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING   //
@@ -49,24 +59,14 @@ namespace IngameScript
         }
 
         bool setup, errors, firstSetup = true, rightOverTurn = false, leftOverTurn = false;
-        double angleVert, angleHoriz,
-            aVertDifference, aHorizDifference,
-            aVertDifferenceP, aHorizDifferenceP;
+        double angleVert, angleHoriz, aVertDifference, aHorizDifference;
         const double mod = 360;
         IMyShipController Control;
         IMyMotorAdvancedStator Horiz, Vert;
-        IMyTextPanel debugLCD;
         int timer;
         Vector3D x, y, z, // forward, right, up
             xp, yp, zp; // vectors of previous frame
         Vector3D nulla = new Vector3D(0, 0, 0);
-        int nans = 0;
-        int nans2 = 0;
-        int nans3 = 0;
-        int nans4 = 0;
-        int nulloszt = 0;
-        Vector3D[] asd1 = new Vector3D[7];
-        Vector3D[] asd2 = new Vector3D[7];
         public void Main(string args)
         {
             if (setup)
@@ -83,59 +83,8 @@ namespace IngameScript
                 double dy = GetADif(yp, y);
                 double dz = GetADif(zp, z);
 
-                if (x.X == 0) { nans2++; }
-                if (x.Y == 0) { nans2++; }
-                if (x.Z == 0) { nans2++; }
-
-                if (double.IsNaN(dx))
-                {
-                    nans4++;
-                }
-                if (double.IsNaN(dy))
-                {
-                    nans4++;
-                }
-                if (double.IsNaN(dz))
-                {
-                    nans4++;
-                }
-
-                if (double.IsNaN(aVertDifference))
-                {
-                    nans++;
-                    aVertDifference = ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
-                }
-                else
-                {
-                    aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
-                }
-                if (double.IsNaN(aHorizDifference))
-                {
-                    nans++;
-                    aHorizDifference = (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
-                }
-                else
-                {
-                    aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
-                }
-                if (double.IsNaN(aVertDifference))
-                {
-                    nans2++;
-                    aVertDifference = aVertDifferenceP;
-                }
-                else
-                {
-                    aVertDifferenceP = aVertDifference;
-                }
-                if (double.IsNaN(aHorizDifference))
-                {
-                    nans2++;
-                    aHorizDifference = aHorizDifferenceP;
-                }
-                else
-                {
-                    aHorizDifferenceP = aHorizDifference;
-                }
+                aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
+                aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
 
                 double rHoriz = Control.RotationIndicator.Y * sensitivity;
                 double rVert = Control.RotationIndicator.X * sensitivity;
@@ -144,22 +93,6 @@ namespace IngameScript
 
                 Angle(Vert, (-aVertDifference + angleVert), -limitDown, limitUp);
                 Angle2(Horiz, (-aHorizDifference + angleHoriz), -limitLeft, limitRight);
-
-                debugLCD.WriteText("", false);
-                debugLCD.WriteText("\n Vert.Angle: " + ToDeg(Vert.Angle), true);
-                debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
-                debugLCD.WriteText("\n", true);
-                debugLCD.WriteText("\n rHoriz: " + rHoriz, true);
-                debugLCD.WriteText("\n rVert: " + rVert, true);
-                debugLCD.WriteText("\n", true);
-                debugLCD.WriteText("\n Angle with: " + (-aVertDifference + angleVert), true);
-                debugLCD.WriteText("\n Angle2 with: " + (-aHorizDifference + angleHoriz), true);
-                debugLCD.WriteText("\n", true);
-                debugLCD.WriteText("\n nans: " + nans, true);
-                debugLCD.WriteText("\n nans2: " + nans2, true);
-                debugLCD.WriteText("\n nans3: " + nans3, true);
-                debugLCD.WriteText("\n nans4: " + nans4, true);
-                debugLCD.WriteText("\n nulloszt: " + nulloszt, true);
 
                 timer++;
                 if (timer > 80) { timer = 0; }
@@ -178,11 +111,9 @@ namespace IngameScript
                 Control = (IMyShipController)GetBlock(CockpitName);
                 Horiz = (IMyMotorAdvancedStator)GetBlock(HorizName);
                 Vert = (IMyMotorAdvancedStator)GetBlock(VertName);
-                debugLCD = (IMyTextPanel)GetBlock("LCD");
                 if (Control == null) { Echo("ShipController with the name `" + CockpitName + "` is missing."); }
                 if (Vert == null) { Echo("Rotor with the name `" + HorizName + "` is missing."); }
                 if (Horiz == null) { Echo("Rotor with the name `" + VertName + "` is missing."); }
-                if (debugLCD == null) { Echo("LCD with the name `LCD` is missing."); }
                 if (!errors)
                 {
                     setup = true;
