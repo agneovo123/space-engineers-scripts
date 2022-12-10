@@ -22,15 +22,15 @@ namespace IngameScript
 {
     partial class program7 : MyGridProgram
     {
-        //////////////////////////////////////////////////
-        // Code based on <name here>'s gravity based gun stabilizer
-        //////////////////////////////////////////////////
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
         double sensitivity = 0.05; // lower value = lower sensitivity
-        bool setup, errors, firstSetup = true;
+        double motorSpeedLimit = 60; // value: 0 to 60
+        double verticalSpeedLimit = 60; // value: 0 to 60
+
+        bool setup, errors, firstSetup = true, rightOverTurn = false, leftOverTurn = false;
         double angleVert, angleHoriz;
         double aVertDifference = 0;
         double aHorizDifference = 0;
@@ -40,8 +40,7 @@ namespace IngameScript
         IMySmallGatlingGun Gun;
         int timer;
         Vector3D x, y, z, w, //forward, right up, left
-            xp, yp, zp, //previous vectors
-            ax, ay, az; //absolute (starting) vectors
+            xp, yp, zp; //previous vectors
         public void Main(string args)
         {
             if (setup)
@@ -112,12 +111,7 @@ namespace IngameScript
                 else if (timer < 40)
                 {
                     Echo("Xionphs stabilized mouse-turret script \n status: running .");
-                    if (firstSetup)
-                    {
-                        firstSetup = false;
-                        Horiz.ApplyAction("OnOff_On");
-                        Vert.ApplyAction("OnOff_On");
-                    }
+                    if (firstSetup) { firstSetup = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); } // turns rotors back on after 20 ticks
                 }
                 else if (timer < 60) { Echo("Xionphs stabilized mouse-turret script \n status: running .."); }
                 else if (timer < 80) { Echo("Xionphs stabilized mouse-turret script \n status: running ..."); }
@@ -137,16 +131,12 @@ namespace IngameScript
                 if (Gun == null) { Echo("Gun with the name `Elite Gatling Gun` is missing."); }
                 if (!errors) { 
                     setup = true;
-                    // alap/start
-                    ax = Control.WorldMatrix.Forward;
-                    ay = Control.WorldMatrix.Right;
-                    az = Control.WorldMatrix.Up;
                     angleVert = 0;
                     angleHoriz = 0;
                     aVertDifference = 0;
                     aHorizDifference = 0;
-                    Horiz.ApplyAction("OnOff_Off");
-                    Vert.ApplyAction("OnOff_Off");
+                    Horiz.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
+                    Vert.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
                 }
                 timer = 0;
             }
@@ -156,6 +146,19 @@ namespace IngameScript
         double Cos(double d) { return Math.Cos(ToRad(d)); }
         double ToRad(double angle) { return angle * (Math.PI / 180.0); }
         double ToDeg(double angle) { return angle * (180.0 / Math.PI); }
+        double ClampHSpeed(double number)
+        {
+            if (number > motorSpeedLimit) { return motorSpeedLimit; }
+            if (number < -motorSpeedLimit) { return -motorSpeedLimit; }
+            return number;
+        }
+        double ClampVSpeed(double number)
+        {
+            if (number > verticalSpeedLimit) { return verticalSpeedLimit; }
+            if (number < -verticalSpeedLimit) { return -verticalSpeedLimit; }
+            return number;
+        }
+        double Abs(double n) { if (n<0) { return -n; } return n; }
         /// <summary> Get angle difference </summary>
         double GetADif(Vector3D a, Vector3D b)
         {
@@ -181,35 +184,47 @@ namespace IngameScript
             }
             motor.SetValueFloat("Velocity", (float)(ang - motorCurrentAngle) * 6f);
         }
-        bool righttriggered = false;
         public void Angle2(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
-            double motorCurrentAngle = ToDeg(motor.Angle);
             double mod = 360;
+            double motorCurrentAngle = ToDeg(motor.Angle) % mod;
             debugLCD.WriteText("\n", true);
             debugLCD.WriteText("\n ang: " + ang, true);
-            if (ang > 360 || righttriggered)
+            debugLCD.WriteText("\n motorCurrentAngle: " + motorCurrentAngle, true);
+            debugLCD.WriteText("\n ModC: " + ((mod - motorCurrentAngle + Abs((ang % mod)-mod)) * 6f), true);
+            debugLCD.WriteText("\n ModCRev: " + ((motorCurrentAngle - mod - (ang % mod)) * 6f), true);
+            debugLCD.WriteText("\n V1: " + motor.TargetVelocityRPM, true);
+            debugLCD.WriteText("\n righttriggered: " + rightOverTurn, true);
+            if (ang > 360 || rightOverTurn)
             {
-                motor.SetValueFloat("Velocity", Math.Min((float)(mod - motorCurrentAngle + (ang % mod)) * 6f, 60));
-                //motor.SetValueFloat("LowerLimit", (float)(ang % mod));
-                //motor.SetValueFloat("UpperLimit", (float)(ang % mod));
-                if (!righttriggered)
+                motor.SetValueFloat("Velocity", (float)ClampHSpeed((mod - motorCurrentAngle + (ang % mod)) * 6f));
+                motor.SetValueFloat("LowerLimit", float.MinValue);
+                motor.SetValueFloat("UpperLimit", float.MaxValue);
+                if (!rightOverTurn)
                 {
                     aHorizDifference += mod;
                 }
-                righttriggered = true;
-                if (motor.Angle < 60)
+                rightOverTurn = true;
+                if (motorCurrentAngle < 60)
                 {
-                    righttriggered = false;
+                    rightOverTurn = false;
                 }
                 return;
             }
-            if (ang < -360)
+            if (ang < -360 || leftOverTurn)
             {
-                motor.SetValueFloat("Velocity", Math.Min((float)(mod + motorCurrentAngle - (Math.Abs(ang) % mod)) * 6f, 60));
-                //motor.SetValueFloat("LowerLimit", (float)(ang % mod));
-                //motor.SetValueFloat("UpperLimit", (float)(ang % mod));
-                aHorizDifference -= mod;
+                motor.SetValueFloat("Velocity", (float)ClampHSpeed((motorCurrentAngle - mod - (ang % mod)) * 6f));
+                motor.SetValueFloat("LowerLimit", float.MinValue);
+                motor.SetValueFloat("UpperLimit", float.MaxValue);
+                if (!leftOverTurn)
+                {
+                    aHorizDifference -= mod;
+                }
+                leftOverTurn = true;
+                if (motorCurrentAngle > -60)
+                {
+                    leftOverTurn = false;
+                }
                 return;
             }
             if (ang >= highLimit)
@@ -238,7 +253,8 @@ namespace IngameScript
                 motor.SetValueFloat("LowerLimit", (float)ang);
                 motor.SetValueFloat("UpperLimit", (float)highLimit);
             }
-            motor.SetValueFloat("Velocity", Math.Min((float)(ang - motorCurrentAngle) * 6f, 60));
+            debugLCD.WriteText("\n V2: " + motor.TargetVelocityRPM, true);
+            motor.SetValueFloat("Velocity", (float)ClampHSpeed((ang - motorCurrentAngle) * 6f));
         }
         public IMyTerminalBlock GetBlock(string name)
         {
