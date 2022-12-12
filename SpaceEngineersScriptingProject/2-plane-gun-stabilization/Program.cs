@@ -31,7 +31,8 @@ namespace IngameScript
         ///////////////////////////////////////////////////////
 
         // This script works with rotor, advanced rotor, and hinge
-        // You can find the not-minified version on my github: 
+        // You can find the not-minified version on my github:
+        // https://github.com/agneovo123/space-engineers-scripts/blob/main/SpaceEngineersScriptingProject/2-plane-gun-stabilization/Program.cs
 
         // sets your sensitivity
         const double sensitivity = 0.05;
