@@ -65,7 +65,7 @@ namespace IngameScript
         }
 
         bool setup, errors, firstSetup = true, rightOverTurn = false, leftOverTurn = false;
-        double angleVert, angleHoriz, aVertDifference, aHorizDifference;
+        double userVert, userHoriz, angleVert, angleHoriz, aVertDifference, aHorizDifference;
         const double mod = 360;
         IMyShipController Control;
         IMyMotorStator Horiz, Vert;
@@ -95,10 +95,10 @@ namespace IngameScript
                 aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
                 aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
 
-                double rHoriz = Control.RotationIndicator.Y * sensitivity;
-                double rVert = Control.RotationIndicator.X * sensitivity;
-                angleHoriz += rHoriz;
-                angleVert -= rVert;
+                userHoriz = Control.RotationIndicator.Y * sensitivity;
+                userVert = Control.RotationIndicator.X * sensitivity;
+                angleHoriz += userHoriz;
+                angleVert -= userVert;
 
                 Angle(Vert, (-aVertDifference + angleVert), -limitDown, limitUp);
                 Angle2(Horiz, (-aHorizDifference + angleHoriz), -limitLeft, limitRight);
@@ -162,11 +162,13 @@ namespace IngameScript
             double motorCurrentAngle = ToDeg(motor.Angle);
             if (ang > highLimit)
             {
+                angleVert += userVert;
                 motor.SetValueFloat("LowerLimit", (float)highLimit);
                 motor.SetValueFloat("UpperLimit", (float)highLimit);
             }
             else if (ang < lowLimit)
             {
+                angleVert += userVert;
                 motor.SetValueFloat("LowerLimit", (float)lowLimit);
                 motor.SetValueFloat("UpperLimit", (float)lowLimit);
             }
