@@ -1,5 +1,7 @@
 # Agneovo123's Space Engineers Scripts
 
-**Currently available Scripts:**
- - [2 plane gun stabilization](https://github.com/agneovo123/space-engineers-scripts/blob/main/RELEASES/2%20plane%20gun%20stabilization%20script.cs)
- 
+**You can browse scripts in the '[RELEASES](https://github.com/agneovo123/space-engineers-scripts/tree/main/RELEASES)' folder**
+
+**Scripts currently available on the Workshop:**
+//todo: upload to workshop
+ - [2 plane gun stabilization]()
