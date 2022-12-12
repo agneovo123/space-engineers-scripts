@@ -22,6 +22,9 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
+        //TODO:
+        // - argument handling
+        // - arguments for reset & sensitivity
         // if you want to put this script into the game, start copying from this line ...
         #region mdk preserve
         ///////////////////////////////////////////////////////
@@ -37,9 +40,9 @@ namespace IngameScript
         // sets your sensitivity
         const double sensitivity = 0.05;
         // how fast the horizontal rotor can go value: 0 to 60
-        const double horizontalSpeedLimit = 60;
+        const double horizontalSpeedLimit = 30;
         // how fast the vertical rotor can go value: 0 to 60
-        const double verticalSpeedLimit = 60;
+        const double verticalSpeedLimit = 30;
         // how much the turret can turn left (set to 360 to make it unlimited)
         const double limitLeft = 360;
         // how much the turret can turn right (set to 360 to make it unlimited)
@@ -56,48 +59,61 @@ namespace IngameScript
         // the name of your vertical (up-down) rotor
         const string VertName = "Rotor Vertical";
         ////////////////////////////////////////////////////////////////////////////////
-        //   DO NOT EDIT ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING   //
+        //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
         ////////////////////////////////////////////////////////////////////////////////
-        
+
         #endregion
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 
-        bool setup, errors, firstSetup = true, rightOverTurn = false, leftOverTurn = false;
+        bool setup, errors, rotorsOff = true, rightOverTurn = false, leftOverTurn = false;
         double userVert, userHoriz, angleVert, angleHoriz, aVertDifference, aHorizDifference;
-        const double mod = 360;
-        IMyShipController Control;
+        const double mod = 360, radToDegMultiplier = (180.0 / Math.PI);
+        IMyShipController Cockpit;
         IMyMotorStator Horiz, Vert;
         int timer;
         Vector3D x, y, z, // forward, right, up
             xp, yp, zp; // vectors of previous frame
-        Vector3D nulla = new Vector3D(0, 0, 0);
+        Vector3D nullVector = new Vector3D(0, 0, 0);
         const string echoStr = "Agneovo's 2 plane gun stabilizer script \nrunning",
             wtnStr = " with the name ",
-            misStr = "` is missing.";
+            misStr = "` is missing.",
+            zerrorStr = " cannot be lover than 0";
         public void Main(string args)
         {
-            if (setup)
+            // checks if setup is done (true); runs from 2nd tick
+            // If the programmable block's CustomData = "reset", then don't run; effectively resetting the gun to it's forward position
+            if (setup && Me.CustomData != "reset")
             {
-                xp = (x == nulla) ? Control.WorldMatrix.Forward : x;
-                yp = (y == nulla) ? Control.WorldMatrix.Right : y;
-                zp = (z == nulla) ? Control.WorldMatrix.Up : z;
+                // set previous vectors
+                // on the first run (2nd tick) the x,y,z vectors haven't been set yet, so they are nullVectors
+                xp = (x == nullVector) ? Cockpit.WorldMatrix.Forward : x;
+                yp = (y == nullVector) ? Cockpit.WorldMatrix.Right : y;
+                zp = (z == nullVector) ? Cockpit.WorldMatrix.Up : z;
+                // set current vectors
+                // uses the cockpits directions to claculate deltas
+                x = Cockpit.WorldMatrix.Forward;
+                y = Cockpit.WorldMatrix.Right;
+                z = Cockpit.WorldMatrix.Up;
 
-                x = Control.WorldMatrix.Forward;
-                y = Control.WorldMatrix.Right;
-                z = Control.WorldMatrix.Up;
-
+                // deltas
+                // claculates how much the cockpit(vehicle body) has turned since last frame
                 double dx = GetADif(xp, x);
                 double dy = GetADif(yp, y);
                 double dz = GetADif(zp, z);
 
+                // accumulative difference
+                // basically, over time, these variables well, vary in size
+                // uses Sin & Cos to enable stabilization even when not looking forward                                      //this bit here checks if the vehicle turned up or down
                 aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
+                //                                      //this bit here checks if the vehicle turned right or left
                 aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
 
-                userHoriz = Control.RotationIndicator.Y * sensitivity;
-                userVert = Control.RotationIndicator.X * sensitivity;
+                // sets user input
+                userHoriz = Cockpit.RotationIndicator.Y * sensitivity;
+                userVert = Cockpit.RotationIndicator.X * sensitivity;
                 angleHoriz += userHoriz;
                 angleVert -= userVert;
 
@@ -110,32 +126,52 @@ namespace IngameScript
                 else if (timer < 40)
                 {
                     Echo(echoStr + " .");
-                    if (firstSetup) { firstSetup = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); } // turns rotors back on after 20 ticks
+                    // on the first run of this (21st tick from restart/recompile) turn the rotors back on.
+                    // This is to prevent a bug(?), where the rotors would freak out on each paste/Recompile
+                    // and would only stop, when manually turned off, then back on again.
+                    if (rotorsOff) { rotorsOff = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); }
                 }
                 else if (timer < 60) { Echo(echoStr + " .."); }
                 else if (timer < 80) { Echo(echoStr + " ..."); }
             }
+            //runs on first tick
             else
             {
+                // set errors to false (happy state)
                 errors = false;
-                Control = (IMyShipController)GetBlock(CockpitName);
+                // try to get necessary blocks
+                Cockpit = (IMyShipController)GetBlock(CockpitName);
                 Horiz = (IMyMotorStator)GetBlock(HorizName);
                 Vert = (IMyMotorStator)GetBlock(VertName);
-                if (Control == null) { Echo("Cockpit" + wtnStr + "`" + CockpitName + misStr); }
+                // check if any of the above blocks are missing
+                // and tell user (programmable block's right side text area in the control panel)
+                if (Cockpit == null) { Echo("Cockpit" + wtnStr + "`" + CockpitName + misStr); }
                 if (Vert == null) { Echo("Rotor"+ wtnStr + "`" + HorizName + misStr); }
                 if (Horiz == null) { Echo("Rotor" + wtnStr + "`" + VertName + misStr); }
+                if (limitUp < 0) { Echo("limitUp" + zerrorStr); }
+                if (limitDown < 0) { Echo("limitDown" + zerrorStr); }
+                if (limitLeft < 0) { Echo("limitLeft" + zerrorStr); }
+                if (limitRight < 0) { Echo("limitRight" + zerrorStr); }
+                // if there are no errors
                 if (!errors)
                 {
+                    // marks setup as done(true)
+                    // after this the program runs (How do I express what this does, it's plain obvious to me, but what if it isn't for someone reading the code?)
                     setup = true;
-                    firstSetup = true;
-                    Horiz.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
-                    Vert.ApplyAction("OnOff_Off"); // turns off rotors to prevent the startup bug
+                    // turn off rotors to prevent the startup bug
+                    Horiz.ApplyAction("OnOff_Off");
+                    Vert.ApplyAction("OnOff_Off");
+                    // rotorsOff is used to turn the rotors back on after 21 ticks
+                    rotorsOff = true;
+                    // set angle variables to 0;
+                    userVert = userHoriz = angleVert = angleHoriz = aVertDifference = aHorizDifference = 0;
+                    // empty the Programmable block's CustomData
+                    // used to pass arguments while running (in this case "reset")
+                    Me.CustomData = "";
                 }
                 timer = 0;
             }
         }
-        double Acos(double d) { return ToDeg(Math.Acos(d)); }
-        double ToDeg(double angle) { return angle * (180.0 / Math.PI); }
         double ClampHSpeed(double number)
         {
             if (number > horizontalSpeedLimit) { return horizontalSpeedLimit; }
@@ -148,7 +184,6 @@ namespace IngameScript
             if (number < -verticalSpeedLimit) { return -verticalSpeedLimit; }
             return number;
         }
-        double Abs(double n) { if (n < 0) { return -n; } return n; }
         /// <summary> Get angle difference </summary>
         double GetADif(Vector3D a, Vector3D b)
         {
@@ -156,20 +191,20 @@ namespace IngameScript
             double fak1 = (a.X * b.X) + (a.Y * b.Y) + (a.Z * b.Z);
             double aMagnitude = Math.Sqrt(a.X * a.X + a.Y * a.Y + a.Z * a.Z);
             double bMagnitude = Math.Sqrt(b.X * b.X + b.Y * b.Y + b.Z * b.Z);
-            return Acos(fak1 / (aMagnitude * bMagnitude));
+            return Math.Acos(fak1 / (aMagnitude * bMagnitude)) * radToDegMultiplier;
         }
         public void Angle(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
-            double motorCurrentAngle = ToDeg(motor.Angle);
+            double motorCurrentAngle = motor.Angle * radToDegMultiplier;
             if (ang > highLimit)
             {
-                angleVert += userVert;
+                //angleVert += userVert; ///Bugfix fail
                 motor.SetValueFloat("LowerLimit", (float)highLimit);
                 motor.SetValueFloat("UpperLimit", (float)highLimit);
             }
             else if (ang < lowLimit)
             {
-                angleVert += userVert;
+                //angleVert += userVert; ///Bugfix fail
                 motor.SetValueFloat("LowerLimit", (float)lowLimit);
                 motor.SetValueFloat("UpperLimit", (float)lowLimit);
             }
@@ -187,7 +222,7 @@ namespace IngameScript
         }
         public void Angle2(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
-            double motorCurrentAngle = ToDeg(motor.Angle);
+            double motorCurrentAngle = motor.Angle * radToDegMultiplier;
             if (ang > 360 || rightOverTurn)
             {
                 motorCurrentAngle %= mod;
