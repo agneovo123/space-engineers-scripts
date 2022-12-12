@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceEngineersScriptingProject", "SpaceEngineersScriptingProject\SpaceEngineersScriptingProject.csproj", "{35C69C1A-B2F2-4A54-B967-E798EBA8684C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2-plane-gun-stabilization", "2-plane-gun-stabilization\2-plane-gun-stabilization.csproj", "{AE701D60-5316-4EFA-97CA-2DE27677852C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 plane gun stabilization script", "2-plane-gun-stabilization\2 plane gun stabilization script.csproj", "{AE701D60-5316-4EFA-97CA-2DE27677852C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
