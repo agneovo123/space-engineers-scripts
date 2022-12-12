@@ -6,6 +6,7 @@
 
 // This script works with rotor, advanced rotor, and hinge
 // You can find the not-minified version on my github:
+// https://github.com/agneovo123/space-engineers-scripts/blob/main/SpaceEngineersScriptingProject/2-plane-gun-stabilization/Program.cs
 
 // sets your sensitivity
 const double sensitivity = 0.05;
@@ -28,6 +29,7 @@ const string CockpitName = "aTankDriver";
 const string HorizName = "Rotor Horizontal";
 // the name of your vertical (up-down) rotor
 const string VertName = "Rotor Vertical";
+
 Program(){Runtime.UpdateFrequency=UpdateFrequency.Update1;}bool l,k,j=true,i=false,m=false;double o,Å,Æ,Ä;const double Ã
 =360;IMyShipController Â;IMyMotorStator Á,À;int º;Vector3D µ,ª,w,v,u,t;Vector3D s=new Vector3D(0,0,0);const string r=
 "Agneovo's 2 plane gun stabilizer script \nrunning",q=" with the name ",p="` is missing.";void Main(string P){if(l){v=(µ==s)?Â.WorldMatrix.Forward:µ;u=(ª==s)?Â.WorldMatrix
