@@ -55,10 +55,11 @@ namespace IngameScript
         const string HorizName = "Rotor Horizontal";
         // the name of your vertical (up-down) rotor
         const string VertName = "Rotor Vertical";
-        #endregion
         ////////////////////////////////////////////////////////////////////////////////
         //   DO NOT EDIT ANYTHING BELOW THIS LINE UNLESS YOU KNOW WHAT YOU'RE DOING   //
         ////////////////////////////////////////////////////////////////////////////////
+        
+        #endregion
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;

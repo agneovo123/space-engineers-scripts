@@ -29,6 +29,9 @@ const string CockpitName = "aTankDriver";
 const string HorizName = "Rotor Horizontal";
 // the name of your vertical (up-down) rotor
 const string VertName = "Rotor Vertical";
+////////////////////////////////////////////////////////////////////////////////
+//                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
+////////////////////////////////////////////////////////////////////////////////
 
 Program(){Runtime.UpdateFrequency=UpdateFrequency.Update1;}bool l,k,j=true,i=false,m=false;double o,Å,Æ,Ä,Ã,Â;const
 double Á=360;IMyShipController À;IMyMotorStator º,µ;int ª;Vector3D w,v,u,t,s,r;Vector3D q=new Vector3D(0,0,0);const string p=
