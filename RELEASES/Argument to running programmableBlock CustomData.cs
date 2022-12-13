@@ -13,7 +13,7 @@ public Program(){}
 MyCommandLine A=new MyCommandLine();void Main(string B,UpdateType C){if(A.TryParse(B)){if(A.Argument(0)==null){Echo(
 "No argument! Refer to the beginning of the script for instructions.");}}if(B!=null&&B!=""){if(A.Argument(0).Contains(" ")){B=B.Substring(A.Argument(0).Length+3,B.Length-A.Argument(0).
 Length-3);}}string D=A.Argument(0);string E="";for(int F=1;F<A.ArgumentCount;F++){E+=A.Argument(F);if(F+1<A.ArgumentCount){E+=
-";";}}string[]G=A.Switches.ToArray();for(int F=0;F<G.Length;F++){if(F==0){E+=";";}E+="-"+G[F];if(F+1<G.Length){E+=";";}}
-IMyProgrammableBlock H=(IMyProgrammableBlock)GridTerminalSystem.GetBlockWithName(D);if(H==null){Echo("Programmable block with name \'"+D+
-"\' not found!");}else{H.CustomData=E;string I=H.CustomData;if(E==I){Echo("Arguments passed to \'"+D+"\': "+E);}else{Echo(
-"Arguments unsuccessfully passed to \'"+D+"\'");}}}
+";";}}string[]G=A.Switches.ToArray();for(int F=0;F<G.Length;F++){if(F==0&&A.ArgumentCount>0){E+=";";}E+="-"+G[F];if(F+1<G.
+Length){E+=";";}}IMyProgrammableBlock H=(IMyProgrammableBlock)GridTerminalSystem.GetBlockWithName(D);if(H==null){Echo(
+"Programmable block with name \'"+D+"\' not found!");}else{H.CustomData=E;string I=H.CustomData;if(E==I){Echo("Arguments passed to \'"+D+"\': "+E);}else{
+Echo("Arguments unsuccessfully passed to \'"+D+"\'");}}}

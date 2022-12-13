@@ -66,7 +66,7 @@ namespace IngameScript
             string[] switches = _commandLine.Switches.ToArray();
             for (int i = 0; i < switches.Length; i++)
             {
-                if (i == 0)
+                if (i == 0 && _commandLine.ArgumentCount > 0)
                 {
                     arguments += ";";
                 }

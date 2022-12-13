@@ -64,24 +64,42 @@ namespace IngameScript
         public Program(){Runtime.UpdateFrequency = UpdateFrequency.Update1; }
         #endregion
 
-        bool setup, errors, rotorsOff = true, rightOverTurn = false, leftOverTurn = false;
+        // all of the bools are used to tell something to work or to not work over multiple frames
+        bool setup, errors, rotorsOff = true, rightOverTurn = false, leftOverTurn = false, resetCommandLine = true;
+        // angles user input, current angle, vehicle body movement
         double userVert, userHoriz, angleVert, angleHoriz, aVertDifference, aHorizDifference;
+        // mathematical constatns, 360 degrees in a circle, you multiply a radian value with 'radToDegMultiplier' to get it's value in degrees
         const double mod = 360, radToDegMultiplier = (180.0 / Math.PI);
+        // essential blocks for the functioning of the script ... *fake laugh* cock *fake laugh* it means penis
         IMyShipController Cockpit;
         IMyMotorStator Horiz, Vert;
+        // timer for displaying/updating status
         int timer;
+        // vehicle body(cockpit) vectors
         Vector3D x, y, z, // forward, right, up
             xp, yp, zp; // vectors of previous frame
+        // nullvector idk what to explain about it, it has no size, nor direction...
         Vector3D nullVector = new Vector3D(0, 0, 0);
+        // these strings are here to manually help the minifier a bit
         const string echoStr = "Agneovo's 2 plane gun stabilizer script \nrunning",
             wtnStr = " with the name ",
             misStr = "` is missing.",
             zerrorStr = " cannot be lover than 0";
+        // argument interpreter
+        MyCommandLine _commandLine = new MyCommandLine();
         public void Main(string args)
         {
             // checks if setup is done (true); runs from 2nd tick
             // If the programmable block's CustomData = "reset", then don't run; effectively resetting the gun to it's forward position
-            if (setup && Me.CustomData != "reset")
+            if (Me.CustomData != null)
+            {
+                _commandLine.TryParse(Me.CustomData.Replace(";", " "));
+            }
+            else if (resetCommandLine)
+            {
+                _commandLine.TryParse("");
+            }
+            if (setup && !_commandLine.Switch("resetGun"))
             {
                 // set previous vectors
                 // on the first run (2nd tick) the x,y,z vectors haven't been set yet, so they are nullVectors
