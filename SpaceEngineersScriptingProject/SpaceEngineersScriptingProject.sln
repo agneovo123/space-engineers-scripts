@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceEngineersScriptingProj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 plane gun stabilization script", "2-plane-gun-stabilization\2 plane gun stabilization script.csproj", "{AE701D60-5316-4EFA-97CA-2DE27677852C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Argument to running programmableBlock CustomData", "Argument to running programmableBlock CustomData\Argument to running programmableBlock CustomData.csproj", "{6C6EDE9B-735D-4A68-BB30-66203F99F109}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -16,6 +18,8 @@ Global
 		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Debug|x64.Build.0 = Debug|x64
 		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Debug|x64.ActiveCfg = Debug|x64
 		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Debug|x64.Build.0 = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Debug|x64.ActiveCfg = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,7 +30,7 @@ namespace IngameScript
         ///////////////////////////////////////////////////////
         //  Based on Xionphs stabilized mouse-turret script  //
         ///////////////////////////////////////////////////////
-        //              EDITABLE VARIABLES:                  //
+        //            CUSTOMIZABLE VARIABLES:                //
         ///////////////////////////////////////////////////////
 
         // This script works with rotor, advanced rotor, and hinge
@@ -61,12 +61,8 @@ namespace IngameScript
         ////////////////////////////////////////////////////////////////////////////////
         //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
         ////////////////////////////////////////////////////////////////////////////////
-
+        public Program(){Runtime.UpdateFrequency = UpdateFrequency.Update1; }
         #endregion
-        public Program()
-        {
-            Runtime.UpdateFrequency = UpdateFrequency.Update1;
-        }
 
         bool setup, errors, rotorsOff = true, rightOverTurn = false, leftOverTurn = false;
         double userVert, userHoriz, angleVert, angleHoriz, aVertDifference, aHorizDifference;

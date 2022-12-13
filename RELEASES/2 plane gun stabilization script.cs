@@ -1,7 +1,7 @@
 ﻿///////////////////////////////////////////////////////
 //  Based on Xionphs stabilized mouse-turret script  //
 ///////////////////////////////////////////////////////
-//              EDITABLE VARIABLES:                  //
+//            CUSTOMIZABLE VARIABLES:                //
 ///////////////////////////////////////////////////////
 
 // This script works with rotor, advanced rotor, and hinge
@@ -11,9 +11,9 @@
 // sets your sensitivity
 const double sensitivity = 0.05;
 // how fast the horizontal rotor can go value: 0 to 60
-const double horizontalSpeedLimit = 60;
+const double horizontalSpeedLimit = 30;
 // how fast the vertical rotor can go value: 0 to 60
-const double verticalSpeedLimit = 60;
+const double verticalSpeedLimit = 30;
 // how much the turret can turn left (set to 360 to make it unlimited)
 const double limitLeft = 360;
 // how much the turret can turn right (set to 360 to make it unlimited)
@@ -32,32 +32,33 @@ const string VertName = "Rotor Vertical";
 ////////////////////////////////////////////////////////////////////////////////
 //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
 ////////////////////////////////////////////////////////////////////////////////
-
-Program(){Runtime.UpdateFrequency=UpdateFrequency.Update1;}bool l,k,j=true,i=false,m=false;double o,Å,Æ,Ä,Ã,Â;const
-double Á=360;IMyShipController À;IMyMotorStator º,µ;int ª;Vector3D w,v,u,t,s,r;Vector3D q=new Vector3D(0,0,0);const string p=
-"Agneovo's 2 plane gun stabilizer script \nrunning",g=" with the name ",P="` is missing.";void Main(string N){if(l){t=(w==q)?À.WorldMatrix.Forward:w;s=(v==q)?À.WorldMatrix
-.Right:v;r=(u==q)?À.WorldMatrix.Up:u;w=À.WorldMatrix.Forward;v=À.WorldMatrix.Right;u=À.WorldMatrix.Up;double M=G(t,w);
-double L=G(s,v);double K=G(r,u);Ã+=((Math.Cos(º.Angle)*(M+K-L)+Math.Sin(º.Angle)*(L+K-M))/2)*(G(w,r)<G(t,r)?1:-1);Â+=(M+L-K)/2
-*(G(t,v)>G(t,s)?1:-1);Å=À.RotationIndicator.Y*sensitivity;o=À.RotationIndicator.X*sensitivity;Ä+=Å;Æ-=o;Z(µ,(-Ã+Æ),-
-limitDown,limitUp);Y(º,(-Â+Ä),-limitLeft,limitRight);ª++;if(ª>80){ª=0;}if(ª<20){Echo(p);}else if(ª<40){Echo(p+" .");if(j){j=false
-;º.ApplyAction("OnOff_On");µ.ApplyAction("OnOff_On");}}else if(ª<60){Echo(p+" ..");}else if(ª<80){Echo(p+" ...");}}else{k
-=false;À=(IMyShipController)S(CockpitName);º=(IMyMotorStator)S(HorizName);µ=(IMyMotorStator)S(VertName);if(À==null){Echo(
-"Cockpit"+g+"`"+CockpitName+P);}if(µ==null){Echo("Rotor"+g+"`"+HorizName+P);}if(º==null){Echo("Rotor"+g+"`"+VertName+P);}if(!k){l
-=true;j=true;º.ApplyAction("OnOff_Off");µ.ApplyAction("OnOff_Off");}ª=0;}}double J(double I){return O(Math.Acos(I));}
-double O(double H){return H*(180.0/Math.PI);}double F(double D){if(D>horizontalSpeedLimit){return horizontalSpeedLimit;}if(D<-
-horizontalSpeedLimit){return-horizontalSpeedLimit;}return D;}double E(double D){if(D>verticalSpeedLimit){return verticalSpeedLimit;}if(D<-
-verticalSpeedLimit){return-verticalSpeedLimit;}return D;}double C(double B){if(B<0){return-B;}return B;}double G(Vector3D A,Vector3D Q){if
-(A==Q){return 0;}double f=(A.X*Q.X)+(A.Y*Q.Y)+(A.Z*Q.Z);double e=Math.Sqrt(A.X*A.X+A.Y*A.Y+A.Z*A.Z);double c=Math.Sqrt(Q.
-X*Q.X+Q.Y*Q.Y+Q.Z*Q.Z);return J(f/(e*c));}void Z(IMyMotorStator X,double W,double V,double U){double T=O(X.Angle);if(W>U)
-{Æ+=o;X.SetValueFloat("LowerLimit",(float)U);X.SetValueFloat("UpperLimit",(float)U);}else if(W<V){Æ+=o;X.SetValueFloat(
-"LowerLimit",(float)V);X.SetValueFloat("UpperLimit",(float)V);}else if(W>T){X.SetValueFloat("LowerLimit",(float)V);X.SetValueFloat(
-"UpperLimit",(float)W);}else{X.SetValueFloat("LowerLimit",(float)W);X.SetValueFloat("UpperLimit",(float)U);}X.SetValueFloat(
-"Velocity",(float)E((W-T)*6f));}void Y(IMyMotorStator X,double W,double V,double U){double T=O(X.Angle);if(W>360||i){T%=Á;X.
-SetValueFloat("Velocity",(float)F((Á-T+(W%Á))*6f));X.SetValueFloat("LowerLimit",float.MinValue);X.SetValueFloat("UpperLimit",float.
-MaxValue);if(!i){Â+=Á;}i=true;if(T<60){i=false;}return;}if(W<-360||m){T=-(T%Á);X.SetValueFloat("Velocity",(float)F((T-Á-(W%Á))*
-6f));X.SetValueFloat("LowerLimit",float.MinValue);X.SetValueFloat("UpperLimit",float.MaxValue);if(!m){Â-=Á;}m=true;if(T>-
-60){m=false;}return;}if(W>=U){X.SetValueFloat("LowerLimit",(float)0);X.SetValueFloat("UpperLimit",(float)0);}else if(W<=V)
-{X.SetValueFloat("LowerLimit",(float)-0);X.SetValueFloat("UpperLimit",(float)-0);}else if(W>T){X.SetValueFloat(
-"LowerLimit",(float)V);X.SetValueFloat("UpperLimit",(float)W);}else{X.SetValueFloat("LowerLimit",(float)W);X.SetValueFloat(
-"UpperLimit",(float)U);}X.SetValueFloat("Velocity",(float)F((W-T)*6f));}IMyTerminalBlock S(string h){IMyTerminalBlock R=
-GridTerminalSystem.GetBlockWithName(h);if(R==null){k=true;}return R;}
+public Program(){Runtime.UpdateFrequency = UpdateFrequency.Update1; }
+bool h,g,f=true,i=false,j=false;double r,À,µ,ª,w,v;const double u=360,t=(180.0/Math.PI);IMyShipController º;
+IMyMotorStator s,q;int p;Vector3D o,n,m,l,k,d;Vector3D A=new Vector3D(0,0,0);const string W=
+"Agneovo's 2 plane gun stabilizer script \nrunning",B=" with the name ",C="` is missing.",D=" cannot be lover than 0";void Main(string E){if(h&&Me.CustomData!="reset"){l=(
+o==A)?º.WorldMatrix.Forward:o;k=(n==A)?º.WorldMatrix.Right:n;d=(m==A)?º.WorldMatrix.Up:m;o=º.WorldMatrix.Forward;n=º.
+WorldMatrix.Right;m=º.WorldMatrix.Up;double F=L(l,o);double G=L(k,n);double H=L(d,m);w+=((Math.Cos(s.Angle)*(F+H-G)+Math.Sin(s.
+Angle)*(G+H-F))/2)*(L(o,d)<L(l,d)?1:-1);v+=(F+G-H)/2*(L(l,n)>L(l,k)?1:-1);À=º.RotationIndicator.Y*sensitivity;r=º.
+RotationIndicator.X*sensitivity;ª+=À;µ-=r;Y(q,(-w+µ),-limitDown,limitUp);X(s,(-v+ª),-limitLeft,limitRight);p++;if(p>80){p=0;}if(p<20){
+Echo(W);}else if(p<40){Echo(W+" .");if(f){f=false;s.ApplyAction("OnOff_On");q.ApplyAction("OnOff_On");}}else if(p<60){Echo(W
++" ..");}else if(p<80){Echo(W+" ...");}}else{g=false;º=(IMyShipController)Q(CockpitName);s=(IMyMotorStator)Q(HorizName);q
+=(IMyMotorStator)Q(VertName);if(º==null){Echo("Cockpit"+B+"`"+CockpitName+C);}if(q==null){Echo("Rotor"+B+"`"+HorizName+C)
+;}if(s==null){Echo("Rotor"+B+"`"+VertName+C);}if(limitUp<0){Echo("limitUp"+D);}if(limitDown<0){Echo("limitDown"+D);}if(
+limitLeft<0){Echo("limitLeft"+D);}if(limitRight<0){Echo("limitRight"+D);}if(!g){h=true;s.ApplyAction("OnOff_Off");q.ApplyAction(
+"OnOff_Off");f=true;r=À=µ=ª=w=v=0;Me.CustomData="";}p=0;}}double I(double J){if(J>horizontalSpeedLimit){return horizontalSpeedLimit
+;}if(J<-horizontalSpeedLimit){return-horizontalSpeedLimit;}return J;}double K(double J){if(J>verticalSpeedLimit){return
+verticalSpeedLimit;}if(J<-verticalSpeedLimit){return-verticalSpeedLimit;}return J;}double L(Vector3D M,Vector3D N){if(M==N){return 0;}
+double O=(M.X*N.X)+(M.Y*N.Y)+(M.Z*N.Z);double c=Math.Sqrt(M.X*M.X+M.Y*M.Y+M.Z*M.Z);double Z=Math.Sqrt(N.X*N.X+N.Y*N.Y+N.Z*N.Z)
+;return Math.Acos(O/(c*Z))*t;}void Y(IMyMotorStator V,double U,double T,double S){double R=V.Angle*t;if(U>S){V.
+SetValueFloat("LowerLimit",(float)S);V.SetValueFloat("UpperLimit",(float)S);}else if(U<T){V.SetValueFloat("LowerLimit",(float)T);V.
+SetValueFloat("UpperLimit",(float)T);}else if(U>R){V.SetValueFloat("LowerLimit",(float)T);V.SetValueFloat("UpperLimit",(float)U);}
+else{V.SetValueFloat("LowerLimit",(float)U);V.SetValueFloat("UpperLimit",(float)S);}V.SetValueFloat("Velocity",(float)K((U-R
+)*6f));}void X(IMyMotorStator V,double U,double T,double S){double R=V.Angle*t;if(U>360||i){R%=u;V.SetValueFloat(
+"Velocity",(float)I((u-R+(U%u))*6f));V.SetValueFloat("LowerLimit",float.MinValue);V.SetValueFloat("UpperLimit",float.MaxValue);if(
+!i){v+=u;}i=true;if(R<60){i=false;}return;}if(U<-360||j){R=-(R%u);V.SetValueFloat("Velocity",(float)I((R-u-(U%u))*6f));V.
+SetValueFloat("LowerLimit",float.MinValue);V.SetValueFloat("UpperLimit",float.MaxValue);if(!j){v-=u;}j=true;if(R>-60){j=false;}return
+;}if(U>=S){V.SetValueFloat("LowerLimit",(float)0);V.SetValueFloat("UpperLimit",(float)0);}else if(U<=T){V.SetValueFloat(
+"LowerLimit",(float)-0);V.SetValueFloat("UpperLimit",(float)-0);}else if(U>R){V.SetValueFloat("LowerLimit",(float)T);V.SetValueFloat
+("UpperLimit",(float)U);}else{V.SetValueFloat("LowerLimit",(float)U);V.SetValueFloat("UpperLimit",(float)S);}V.
+SetValueFloat("Velocity",(float)I((U-R)*6f));}IMyTerminalBlock Q(string e){IMyTerminalBlock P=GridTerminalSystem.GetBlockWithName(e);
+if(P==null){g=true;}return P;}
