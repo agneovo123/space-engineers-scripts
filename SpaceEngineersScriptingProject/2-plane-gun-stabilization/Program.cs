@@ -43,14 +43,15 @@ namespace IngameScript
         const double horizontalSpeedLimit = 30;
         // how fast the vertical rotor can go value: 0 to 60
         const double verticalSpeedLimit = 30;
-        // how much the turret can turn left (set to 360 to make it unlimited)
-        const double limitLeft = 360;
+        // the next 4 variables range from -360 to 360
+        // how much the turret can turn left (set to -360 to make it unlimited)
+        const double limitLeft = -360;
         // how much the turret can turn right (set to 360 to make it unlimited)
         const double limitRight = 360;
-        // how much the turret can turn up (set to 360 to make it unlimited)
+        // how much the turret can turn up
         const double limitUp = 40;
-        // how much the turret can turn down (set to 360 to make it unlimited)
-        const double limitDown = 12;
+        // how much the turret can turn down
+        const double limitDown = -12;
 
         // the name of your regular/industrial/rover/buggy cockpit
         const string CockpitName = "aTankDriver";
@@ -80,11 +81,6 @@ namespace IngameScript
             xp, yp, zp; // vectors of previous frame
         // nullvector idk what to explain about it, it has no size, nor direction...
         Vector3D nullVector = new Vector3D(0, 0, 0);
-        // these strings are here to manually help the minifier a bit
-        const string echoStr = "Agneovo's 2 plane gun stabilizer script \nrunning",
-            wtnStr = " with the name ",
-            misStr = "` is missing.",
-            zerrorStr = " cannot be lover than 0";
         // argument interpreter
         MyCommandLine _commandLine = new MyCommandLine();
         public void Main(string args)
@@ -131,22 +127,22 @@ namespace IngameScript
                 angleHoriz += userHoriz;
                 angleVert -= userVert;
 
-                Angle(Vert, (-aVertDifference + angleVert), -limitDown, limitUp);
-                Angle2(Horiz, (-aHorizDifference + angleHoriz), -limitLeft, limitRight);
+                Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
+                Angle2(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
 
                 timer++;
                 if (timer > 80) { timer = 0; }
-                if (timer < 20) { Echo(echoStr); }
+                if (timer < 20) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning"); }
                 else if (timer < 40)
                 {
-                    Echo(echoStr + " .");
+                    Echo("Agneovo's 2 plane gun stabilizer script \nrunning.");
                     // on the first run of this (21st tick from restart/recompile) turn the rotors back on.
                     // This is to prevent a bug(?), where the rotors would freak out on each paste/Recompile
                     // and would only stop, when manually turned off, then back on again.
                     if (rotorsOff) { rotorsOff = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); }
                 }
-                else if (timer < 60) { Echo(echoStr + " .."); }
-                else if (timer < 80) { Echo(echoStr + " ..."); }
+                else if (timer < 60) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning.."); }
+                else if (timer < 80) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning..."); }
             }
             //runs on first tick
             else
@@ -159,13 +155,13 @@ namespace IngameScript
                 Vert = (IMyMotorStator)GetBlock(VertName);
                 // check if any of the above blocks are missing
                 // and tell user (programmable block's right side text area in the control panel)
-                if (Cockpit == null) { Echo("Cockpit" + wtnStr + "`" + CockpitName + misStr); }
-                if (Vert == null) { Echo("Rotor"+ wtnStr + "`" + HorizName + misStr); }
-                if (Horiz == null) { Echo("Rotor" + wtnStr + "`" + VertName + misStr); }
-                if (limitUp < 0) { Echo("limitUp" + zerrorStr); }
-                if (limitDown < 0) { Echo("limitDown" + zerrorStr); }
-                if (limitLeft < 0) { Echo("limitLeft" + zerrorStr); }
-                if (limitRight < 0) { Echo("limitRight" + zerrorStr); }
+                if (Cockpit == null) { Echo("Cockpit with the name `" + CockpitName + "` is missing."); }
+                if (Vert == null) { Echo("Rotor with the name `" + HorizName + "` is missing."); }
+                if (Horiz == null) { Echo("Rotor with the name `" + VertName + "` is missing."); }
+                if (limitUp < -360 || limitUp > 360) { Echo("limitUp must be between -360 and 360"); }
+                if (limitDown < -360 || limitDown > 360) { Echo("limitDown must be between -360 and 360"); }
+                if (limitLeft < -360 || limitLeft > 360) { Echo("limitLeft must be between -360 and 360"); }
+                if (limitRight < -360 || limitRight > 360) { Echo("limitRight must be between -360 and 360"); }
                 // if there are no errors
                 if (!errors)
                 {
