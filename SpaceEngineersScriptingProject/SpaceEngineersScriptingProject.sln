@@ -9,17 +9,44 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 plane gun stabilization s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Argument to running programmableBlock CustomData", "Argument to running programmableBlock CustomData\Argument to running programmableBlock CustomData.csproj", "{6C6EDE9B-735D-4A68-BB30-66203F99F109}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIFuckery", "AIFuckery\AIFuckery.csproj", "{063E367A-2C1A-4116-BCF4-51C593F297A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Debug|x64.ActiveCfg = Debug|x64
 		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Debug|x64.Build.0 = Debug|x64
+		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Release|Any CPU.ActiveCfg = Debug|x64
+		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Release|Any CPU.Build.0 = Debug|x64
+		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Release|x64.ActiveCfg = Debug|x64
+		{35C69C1A-B2F2-4A54-B967-E798EBA8684C}.Release|x64.Build.0 = Debug|x64
+		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Debug|x64.ActiveCfg = Debug|x64
 		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Debug|x64.Build.0 = Debug|x64
+		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Release|Any CPU.ActiveCfg = Debug|x64
+		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Release|Any CPU.Build.0 = Debug|x64
+		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Release|x64.ActiveCfg = Debug|x64
+		{AE701D60-5316-4EFA-97CA-2DE27677852C}.Release|x64.Build.0 = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Debug|x64.ActiveCfg = Debug|x64
 		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Debug|x64.Build.0 = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Release|Any CPU.ActiveCfg = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Release|Any CPU.Build.0 = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Release|x64.ActiveCfg = Debug|x64
+		{6C6EDE9B-735D-4A68-BB30-66203F99F109}.Release|x64.Build.0 = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Debug|x64.ActiveCfg = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Debug|x64.Build.0 = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Release|Any CPU.ActiveCfg = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Release|Any CPU.Build.0 = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Release|x64.ActiveCfg = Debug|x64
+		{063E367A-2C1A-4116-BCF4-51C593F297A9}.Release|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
