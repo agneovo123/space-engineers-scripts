@@ -1,3 +1,0 @@
-D:\Projects\SpaceEngineersScriptingProject\SpaceEngineersScriptingProject\obj\x64\Debug\SpaceEngineersScriptingProject.csproj.AssemblyReference.cache
-D:\Projects\SpaceEngineersScriptingProject\SpaceEngineersScriptingProject\obj\x64\Debug\SpaceEngineersScriptingProject.exe.config
-D:\Projects\SpaceEngineersScriptingProject\SpaceEngineersScriptingProject\obj\x64\Debug\SpaceEngineersScriptingProject.csproj.CoreCompileInputs.cache

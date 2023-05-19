@@ -62,7 +62,7 @@ namespace IngameScript
         ////////////////////////////////////////////////////////////////////////////////
         //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
         ////////////////////////////////////////////////////////////////////////////////
-        public Program(){Runtime.UpdateFrequency = UpdateFrequency.Update1; }
+        public Program() { Runtime.UpdateFrequency = UpdateFrequency.Update1; }
         #endregion
 
         // all of the bools are used to tell something to work or to not work over multiple frames
@@ -127,8 +127,8 @@ namespace IngameScript
                 angleHoriz += userHoriz;
                 angleVert -= userVert;
 
-                Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
-                Angle2(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
+                AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
+                AngleHoriz(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
 
                 timer++;
                 if (timer > 80) { timer = 0; }
@@ -184,14 +184,30 @@ namespace IngameScript
         }
         double ClampHSpeed(double number)
         {
-            if (number > horizontalSpeedLimit) { return horizontalSpeedLimit; }
-            if (number < -horizontalSpeedLimit) { return -horizontalSpeedLimit; }
+            //if (userHoriz == 0)
+            //{
+            //    if (number > 60) { return 60; }
+            //    if (number < -60) { return -60; }
+            //}
+            //else
+            //{
+                if (number > horizontalSpeedLimit) { return horizontalSpeedLimit; }
+                if (number < -horizontalSpeedLimit) { return -horizontalSpeedLimit; }
+            //}
             return number;
         }
         double ClampVSpeed(double number)
         {
-            if (number > verticalSpeedLimit) { return verticalSpeedLimit; }
-            if (number < -verticalSpeedLimit) { return -verticalSpeedLimit; }
+            //if (userVert == 0)
+            //{
+            //    if (number > 60) { return 60; }
+            //    if (number < -60) { return -60; }
+            //}
+            //else
+            //{
+                if (number > verticalSpeedLimit) { return verticalSpeedLimit; }
+                if (number < -verticalSpeedLimit) { return -verticalSpeedLimit; }
+            //}
             return number;
         }
         /// <summary> Get angle difference </summary>
@@ -203,7 +219,7 @@ namespace IngameScript
             double bMagnitude = Math.Sqrt(b.X * b.X + b.Y * b.Y + b.Z * b.Z);
             return Math.Acos(fak1 / (aMagnitude * bMagnitude)) * radToDegMultiplier;
         }
-        public void Angle(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
+        public void AngleVert(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
             double motorCurrentAngle = motor.Angle * radToDegMultiplier;
             if (ang > highLimit)
@@ -230,7 +246,7 @@ namespace IngameScript
             }
             motor.SetValueFloat("Velocity", (float)ClampVSpeed((ang - motorCurrentAngle) * 6f));
         }
-        public void Angle2(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
+        public void AngleHoriz(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
             double motorCurrentAngle = motor.Angle * radToDegMultiplier;
             if (ang > 360 || rightOverTurn)

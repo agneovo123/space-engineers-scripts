@@ -1,6 +1,3 @@
-D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.AssemblyReference.cache
-D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2-plane-gun-stabilization.exe.config
-D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.CoreCompileInputs.cache
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\MDK\MDK.options.props
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\MDK\MDK.paths.props
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\2-plane-gun-stabilization.exe.config
@@ -19,6 +16,10 @@ D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-pla
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\System.Numerics.Vectors.dll
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\SixLabors.ImageSharp.xml
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\bin\SixLabors.Core.xml
+D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.AssemblyReference.cache
+D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.SuggestedBindingRedirects.cache
+D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2-plane-gun-stabilization.exe.config
+D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.CoreCompileInputs.cache
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2 plane gun stabilization script.csproj.CopyComplete
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2-plane-gun-stabilization.exe
 D:\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\2-plane-gun-stabilization\obj\x64\Debug\2-plane-gun-stabilization.pdb
