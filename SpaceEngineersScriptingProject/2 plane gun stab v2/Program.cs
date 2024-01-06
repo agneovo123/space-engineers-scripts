@@ -1,4 +1,5 @@
-﻿using Sandbox.Game.EntityComponents;
+﻿using Malware.MDKUtilities;
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -25,10 +26,26 @@ namespace IngameScript
         //TODO:
         // - argument handling
         // - arguments for reset & sensitivity
+
+        // 1 gun reset to 0-0
+        // 2 gun desired vector
+        // 3 gun turn to desired vector
+        // 4 turn desired vector
+        // https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
+        // rotate around the rotors' 'UP' vector
+
+        // where is hinge 'UP' vector ? 
+
+
+
+
+
+
+
+
+
         // if you want to put this script into the game, start copying from this line ...
         #region mdk preserve
-        ///////////////////////////////////////////////////////
-        //  Based on Xionphs stabilized mouse-turret script  //
         ///////////////////////////////////////////////////////
         //            CUSTOMIZABLE VARIABLES:                //
         ///////////////////////////////////////////////////////
@@ -52,17 +69,19 @@ namespace IngameScript
         const double limitUp = 40;
         // how much the turret can turn down
         const double limitDown = -12;
+        // 
+        const float horizontalResetAngle = 0;
+        // 
+        const float verticalResetAngle = 0;
 
-        // the name of your cockpit
+        // the name of your cockpit <used for input>
         const string CockpitName = "aTankDriver";
-        // the name of your horizontal (left-right) rotor
+        // the name of your horizontal (left-right) rotor <used for turning the turret left-right>
         const string HorizName = "Rotor Horizontal";
-        // the name of your vertical (up-down) rotor
+        // the name of your vertical (up-down) rotor <used for turning the turret up-down>
         const string VertName = "Rotor Vertical";
-        // If you want to have your cockpit rotate with the turret, you have to specify a block in the hull, so the
-        // stabilisation can work
-        // If this is empty (""), then the program will assume, the cockpit is in the hull
-        const string hullBlockName = "";
+        // the name of your gun <used for stabilisation, it can be any forward facing block>
+        const string GunName = "Assault Cannon";
         ////////////////////////////////////////////////////////////////////////////////
         //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
         ////////////////////////////////////////////////////////////////////////////////
@@ -70,28 +89,31 @@ namespace IngameScript
         #endregion
 
         // all of the bools are used to tell something to work or to not work over multiple frames
-        bool setup, errors, rotorsOff = true, rightOverTurn = false, leftOverTurn = false, resetCommandLine = true;
+        bool setup = false, errors, rightOverTurn = false, leftOverTurn = false, resetCommandLine = true;
         // angles user input, current angle, vehicle body movement
         double userVert, userHoriz, angleVert, angleHoriz, aVertDifference, aHorizDifference;
         // mathematical constatns, 360 degrees in a circle, you multiply a radian value with 'radToDegMultiplier' to get it's value in degrees
         const double mod = 360, radToDegMultiplier = (180.0 / Math.PI);
         // essential blocks for the functioning of the script ... *hehe* cock *hehe* it means penis
         IMyShipController Cockpit;
-        IMyCubeBlock hullBlock;
+        IMyCubeBlock Gun;
         IMyMotorStator Horiz, Vert;
+        IMyTextPanel debugLCD;
         // timer for displaying/updating status
         int timer;
         // vehicle body(cockpit) vectors
         Vector3D x, y, z, // forward, right, up
             xp, yp, zp; // vectors of previous frame
+        Vector3D vOriginal; // vectors of previous frame
         // nullvector idk what to explain about it, it has no size, nor direction...
         Vector3D nullVector = new Vector3D(0, 0, 0);
+        bool resetting = true, resetDone = false;
         // argument interpreter
         MyCommandLine _commandLine = new MyCommandLine();
+        int idk = 0;
         public void Main(string args)
         {
-            // checks if setup is done (true); runs from 2nd tick
-            // If the programmable block's CustomData = "reset", then don't run; effectively resetting the gun to it's forward position
+            idk++;
             if (Me.CustomData != null)
             {
                 _commandLine.TryParse(Me.CustomData.Replace(";", " "));
@@ -100,31 +122,32 @@ namespace IngameScript
             {
                 _commandLine.TryParse("");
             }
+            if (setup && !resetDone)
+            {
+                debugLCD.WriteText("", false);
+                debugLCD.WriteText("\n idk a: " + idk, true);
+                resetGun();
+                resetDone = IsResetDone();
+                if (!resetDone)
+                {
+                    return;
+                }
+            }
             if (setup && !_commandLine.Switch("resetGun"))
             {
-                if (hullBlockName == "")
-                {
-                    // set previous vectors
-                    // on the first run (2nd tick) the x,y,z vectors haven't been set yet, so they are nullVectors
-                    xp = (x == nullVector) ? Cockpit.WorldMatrix.Forward : x;
-                    yp = (y == nullVector) ? Cockpit.WorldMatrix.Right : y;
-                    zp = (z == nullVector) ? Cockpit.WorldMatrix.Up : z;
-                    // set current vectors
-                    // uses the cockpits directions to claculate deltas
-                    x = Cockpit.WorldMatrix.Forward;
-                    y = Cockpit.WorldMatrix.Right;
-                    z = Cockpit.WorldMatrix.Up;
-                }
-                else
-                {
-                    // use the hullBlock's orientation
-                    xp = (x == nullVector) ? hullBlock.WorldMatrix.Forward : x;
-                    yp = (y == nullVector) ? hullBlock.WorldMatrix.Right : y;
-                    zp = (z == nullVector) ? hullBlock.WorldMatrix.Up : z;
-                    x = hullBlock.WorldMatrix.Forward;
-                    y = hullBlock.WorldMatrix.Right;
-                    z = hullBlock.WorldMatrix.Up;
-                }
+                debugLCD.WriteText("\n idk b: " + idk, true);
+                debugLCD.WriteText("\n DONE", true);
+                return;
+                // set previous vectors
+                // on the first run (2nd tick) the x,y,z vectors haven't been set yet, so they are nullVectors
+                xp = (x == nullVector) ? Gun.WorldMatrix.Forward : x;
+                yp = (y == nullVector) ? Gun.WorldMatrix.Right : y;
+                zp = (z == nullVector) ? Gun.WorldMatrix.Up : z;
+                // set current vectors
+                // uses the cockpits directions to claculate deltas
+                x = Gun.WorldMatrix.Forward;
+                y = Gun.WorldMatrix.Right;
+                z = Gun.WorldMatrix.Up;
 
                 // deltas
                 // claculates how much the cockpit(vehicle body) has turned since last frame
@@ -148,17 +171,31 @@ namespace IngameScript
                 AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
                 AngleHoriz(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
 
+                //debugLCD.WriteText("", false);
+                //debugLCD.WriteText("\n Vert.Angle: " + ToDeg(Vert.Angle), true);
+                //debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
+                //debugLCD.WriteText("\n", true);
+                //debugLCD.WriteText("\n Vert.Velocity: " + Vert.TargetVelocityRPM, true);
+                //debugLCD.WriteText("\n Horiz.Velocity: " + Horiz.TargetVelocityRPM, true);
+                //debugLCD.WriteText("\n", true);
+                //debugLCD.WriteText("\n original: " + vOriginal, true);
+                //debugLCD.WriteText("\n current: " + x, true);
+                //debugLCD.WriteText("\n", true);
+                //// dot = 1 when close
+                //// cross = 0,0,0 when close
+                //debugLCD.WriteText("\n dot: " + Vector3D.Dot(vOriginal, x), true);
+                //debugLCD.WriteText("\n cross: " + Vector3D.Cross(vOriginal, x), true);
+                //
+                //debugLCD.WriteText("\n", true);
+                //debugLCD.WriteText("\n c.rot: " + Cockpit.RotationIndicator, true);
+
+                //Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
+                //Angle(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
+
                 timer++;
                 if (timer > 80) { timer = 0; }
                 if (timer < 20) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning"); }
-                else if (timer < 40)
-                {
-                    Echo("Agneovo's 2 plane gun stabilizer script \nrunning.");
-                    // on the first run of this (21st tick from restart/recompile) turn the rotors back on.
-                    // This is to prevent a bug(?), where the rotors would freak out on each paste/Recompile
-                    // and would only stop, when manually turned off, then back on again.
-                    if (rotorsOff) { rotorsOff = false; Horiz.ApplyAction("OnOff_On"); Vert.ApplyAction("OnOff_On"); }
-                }
+                else if (timer < 40) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning."); }
                 else if (timer < 60) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning.."); }
                 else if (timer < 80) { Echo("Agneovo's 2 plane gun stabilizer script \nrunning..."); }
             }
@@ -171,14 +208,13 @@ namespace IngameScript
                 Cockpit = (IMyShipController)GetBlock(CockpitName);
                 Horiz = (IMyMotorStator)GetBlock(HorizName);
                 Vert = (IMyMotorStator)GetBlock(VertName);
-                // only get hullBlock if it has a name set
-                if (hullBlockName != "") { hullBlock = (IMyCubeBlock)GetBlock(hullBlockName); }
+                Gun = (IMyCubeBlock)GetBlock(GunName);
                 // check if any of the above blocks are missing
                 // and tell user (programmable block's right side text area in the control panel)
                 if (Cockpit == null) { Echo("Cockpit with the name `" + CockpitName + "` is missing."); }
                 if (Vert == null) { Echo("Rotor with the name `" + HorizName + "` is missing."); }
                 if (Horiz == null) { Echo("Rotor with the name `" + VertName + "` is missing."); }
-                if (hullBlockName != "" && hullBlock == null) { Echo("hull block with the name `" + hullBlockName + "` is missing."); }
+                if (Gun == null) { Echo("hull block with the name `" + GunName + "` is missing."); }
                 if (limitUp < -360 || limitUp > 360) { Echo("limitUp must be between -360 and 360"); }
                 if (limitDown < -360 || limitDown > 360) { Echo("limitDown must be between -360 and 360"); }
                 if (limitLeft < -360 || limitLeft > 360) { Echo("limitLeft must be between -360 and 360"); }
@@ -186,22 +222,107 @@ namespace IngameScript
                 // if there are no errors
                 if (!errors)
                 {
-                    // marks setup as done(true)
-                    // after this the program runs (How do I express what this does, it's plain obvious to me, but what if it isn't for someone reading the code?)
+                    // marks setup as done
                     setup = true;
-                    // turn off rotors to prevent the startup bug
-                    Horiz.ApplyAction("OnOff_Off");
-                    Vert.ApplyAction("OnOff_Off");
-                    // rotorsOff is used to turn the rotors back on after 21 ticks
-                    rotorsOff = true;
                     // set angle variables to 0;
                     userVert = userHoriz = angleVert = angleHoriz = aVertDifference = aHorizDifference = 0;
                     // empty the Programmable block's CustomData
                     // used to pass arguments while running (in this case "reset")
                     Me.CustomData = "";
                 }
+
+                vOriginal = Gun.WorldMatrix.Forward;
+                debugLCD = (IMyTextPanel)GetBlock("DEBUGLCD");
+
                 timer = 0;
             }
+        }
+
+        public void resetGun()
+        {
+            debugLCD.WriteText("\n resetGun call: " + idk, true);
+            float hAngle = ToDeg(Horiz.Angle);
+            if (ToDeg(Horiz.Angle) != horizontalResetAngle)
+            {
+                if (hAngle > 180) { hAngle -= 360; }
+                if (hAngle < -180) { hAngle += 360; }
+                if (hAngle > horizontalResetAngle)
+                {
+                    Horiz.TargetVelocityRad = ToRad(Clamp(-10, 0, -hAngle)) * MathHelper.RadiansPerSecondToRPM;
+                }
+                else
+                {
+                    Horiz.TargetVelocityRad = ToRad(Clamp(0, 10, -hAngle)) * MathHelper.RadiansPerSecondToRPM;
+                }
+            }
+            if (ToDeg(Vert.Angle) != verticalResetAngle)
+            {
+                if (ToDeg(Vert.Angle) > verticalResetAngle)
+                {
+                    //Vert.LowerLimitDeg = 0;
+                    //Vert.UpperLimitDeg = ToDeg(Vert.Angle);
+                    Vert.TargetVelocityRad = Clamp(-10, 0, -Vert.Angle) * MathHelper.RadiansPerSecondToRPM;
+                }
+                else
+                {
+                    //Vert.LowerLimitDeg = ToDeg(Vert.Angle);
+                    //Vert.UpperLimitDeg = 0;
+                    Vert.TargetVelocityRad = ToRad(Clamp(0, 10, -Vert.Angle)) * MathHelper.RadiansPerSecondToRPM;
+                }
+            }
+            debugLCD.WriteText("\n", true);
+            debugLCD.WriteText("\n H.a: " + ToDeg(Horiz.Angle), true);
+            debugLCD.WriteText("\n hAngle: " + hAngle, true);
+            debugLCD.WriteText("\n H.l: " + Horiz.LowerLimitDeg, true);
+            debugLCD.WriteText("\n H.u: " + Horiz.UpperLimitDeg, true);
+            debugLCD.WriteText("\n H.v: " + ToDeg(Horiz.TargetVelocityRad), true);
+            debugLCD.WriteText("\n", true);
+            debugLCD.WriteText("\n V.a: " + ToDeg(Vert.Angle), true);
+            debugLCD.WriteText("\n V.l: " + Vert.LowerLimitDeg, true);
+            debugLCD.WriteText("\n V.u: " + Vert.UpperLimitDeg, true);
+            debugLCD.WriteText("\n V.v: " + ToDeg(Vert.TargetVelocityRad), true);
+            debugLCD.WriteText("\n", true);
+        }
+        public bool IsResetDone()
+        {
+            debugLCD.WriteText("\n IsResetDone call: " + idk, true);
+            debugLCD.WriteText("\n H.a: " + ToDeg(Horiz.Angle), true);
+            debugLCD.WriteText("\n if: " + (WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle)), true);
+            debugLCD.WriteText("\n", true);
+            debugLCD.WriteText("\n V.a: " + ToDeg(Vert.Angle), true);
+            debugLCD.WriteText("\n if: " + (WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle)), true);
+            if (WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle))
+            {
+                Horiz.TargetVelocityRad = 0;
+                Horiz.LowerLimitDeg = float.MinValue;
+                Horiz.UpperLimitDeg = float.MaxValue;
+            }
+            if (WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle))
+            {
+                Vert.TargetVelocityRad = 0;
+                Vert.LowerLimitDeg = -90;
+                Vert.UpperLimitDeg = 90;
+            }
+            return WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle) && WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle);
+        }
+        public float Clamp(float min, float max, float num)
+        {
+            if (num > max) { return max; }
+            if (num < min) { return min; }
+            return num;
+        }
+        bool WithinPointOne(float a, float b)
+        {
+            if (Math.Abs(a - b) < 0.1) { return true; }
+            return false;
+        }
+        float ToDeg(float rad)
+        {
+            return MathHelper.ToDegrees(rad);
+        }
+        float ToRad(float deg)
+        {
+            return MathHelper.ToRadians(deg);
         }
         double ClampHSpeed(double number)
         {
@@ -243,31 +364,9 @@ namespace IngameScript
         public void AngleVert(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
             double motorCurrentAngle = motor.Angle * radToDegMultiplier;
-            if (ang > highLimit)
-            {
-                //angleVert += userVert; ///Bugfix fail
-                motor.SetValueFloat("LowerLimit", (float)highLimit);
-                motor.SetValueFloat("UpperLimit", (float)highLimit);
-            }
-            else if (ang < lowLimit)
-            {
-                //angleVert += userVert; ///Bugfix fail
-                motor.SetValueFloat("LowerLimit", (float)lowLimit);
-                motor.SetValueFloat("UpperLimit", (float)lowLimit);
-            }
-            else if (ang > motorCurrentAngle)
-            {
-                motor.SetValueFloat("LowerLimit", (float)lowLimit);
-                motor.SetValueFloat("UpperLimit", (float)ang);
-            }
-            else
-            {
-                motor.SetValueFloat("LowerLimit", (float)ang);
-                motor.SetValueFloat("UpperLimit", (float)highLimit);
-            }
             float velocity = (float)ClampVSpeed((ang - motorCurrentAngle) * 6f);
             //if (velocity < 1 && velocity > -1) { velocity = (float)0; }
-            motor.SetValueFloat("Velocity", velocity);
+            motor.SetValueFloat("Velocity", Min1(velocity));
         }
         public void AngleHoriz(IMyMotorStator motor, double ang, double lowLimit, double highLimit)
         {
@@ -275,9 +374,7 @@ namespace IngameScript
             if (ang > 360 || rightOverTurn)
             {
                 motorCurrentAngle %= mod;
-                motor.SetValueFloat("Velocity", (float)ClampHSpeed((mod - motorCurrentAngle + (ang % mod)) * 6f));
-                motor.SetValueFloat("LowerLimit", float.MinValue);
-                motor.SetValueFloat("UpperLimit", float.MaxValue);
+                motor.SetValueFloat("Velocity", Min1((float)ClampHSpeed((mod - motorCurrentAngle + (ang % mod)) * 6f)));
                 if (!rightOverTurn)
                 {
                     aHorizDifference += mod;
@@ -292,9 +389,7 @@ namespace IngameScript
             if (ang < -360 || leftOverTurn)
             {
                 motorCurrentAngle = -(motorCurrentAngle % mod);
-                motor.SetValueFloat("Velocity", (float)ClampHSpeed((motorCurrentAngle - mod - (ang % mod)) * 6f));
-                motor.SetValueFloat("LowerLimit", float.MinValue);
-                motor.SetValueFloat("UpperLimit", float.MaxValue);
+                motor.SetValueFloat("Velocity", Min1((float)ClampHSpeed((motorCurrentAngle - mod - (ang % mod)) * 6f)));
                 if (!leftOverTurn)
                 {
                     aHorizDifference -= mod;
@@ -306,29 +401,17 @@ namespace IngameScript
                 }
                 return;
             }
-            if (ang >= highLimit)
-            {
-                motor.SetValueFloat("LowerLimit", (float)0);
-                motor.SetValueFloat("UpperLimit", (float)0);
-            }
-            else if (ang <= lowLimit)
-            {
-                motor.SetValueFloat("LowerLimit", (float)-0);
-                motor.SetValueFloat("UpperLimit", (float)-0);
-            }
-            else if (ang > motorCurrentAngle)
-            {
-                motor.SetValueFloat("LowerLimit", (float)lowLimit);
-                motor.SetValueFloat("UpperLimit", (float)ang);
-            }
-            else
-            {
-                motor.SetValueFloat("LowerLimit", (float)ang);
-                motor.SetValueFloat("UpperLimit", (float)highLimit);
-            }
             float velocity = (float)ClampHSpeed((ang - motorCurrentAngle) * 6f);
             //if (velocity < 1 && velocity > -1) { velocity = (float)0; }
-            motor.SetValueFloat("Velocity", velocity);
+            motor.SetValueFloat("Velocity", Min1(velocity));
+        }
+        public float Min1(float v)
+        {
+            if (Math.Abs(v) < 0.1)
+            {
+                return 0;
+            }
+            return v;
         }
         public IMyTerminalBlock GetBlock(string name)
         {
