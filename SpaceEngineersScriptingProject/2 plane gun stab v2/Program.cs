@@ -150,7 +150,7 @@ namespace IngameScript
                 // cross = 0,0,0 when close
                 //debugLCD.WriteText("\n dot: " + Vector3D.Dot(vOriginal, x), true);
                 //debugLCD.WriteText("\n cross: " + Vector3D.Cross(vOriginal, x), true);
-
+                //debugLCD.WriteText("\n", true);
                 if (Math.Abs(Cockpit.RotationIndicator.Y) > 0)
                 {
                     desiredVector = RotateAbout(desiredVector, Horiz.WorldMatrix.Up, ToRad(-userHoriz));
@@ -161,7 +161,7 @@ namespace IngameScript
                     desiredVector = RotateAbout(desiredVector, Vert.WorldMatrix.Up, ToRad(userVert));
                     debugLCD.WriteText("\n desiredVector V: " + desiredVector, true);
                 }
-
+                //Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
                 //AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
                 //AngleHoriz(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
                 Angle(Vert, limitDown, limitUp, true);
@@ -169,6 +169,8 @@ namespace IngameScript
 
 
 
+
+                //Angle(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
 
                 timer++;
                 if (timer > 80) { timer = 0; }
