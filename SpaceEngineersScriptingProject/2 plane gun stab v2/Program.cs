@@ -27,10 +27,10 @@ namespace IngameScript
         // - argument handling
         // - arguments for reset & sensitivity
 
-        // 1 gun reset to 0-0
-        // 2 gun desired vector
-        // 3 gun turn to desired vector
-        // 4 turn desired vector
+        // [+] 1 gun reset to 0-0
+        // [ ] 2 gun desired vector
+        // [ ] 3 gun turn to desired vector
+        // [ ] 4 turn desired vector
         // https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
         // rotate around the rotors' 'UP' vector
 
@@ -104,7 +104,7 @@ namespace IngameScript
         // vehicle body(cockpit) vectors
         Vector3D x, y, z, // forward, right, up
             xp, yp, zp; // vectors of previous frame
-        Vector3D vOriginal; // vectors of previous frame
+        Vector3D vOriginal, desiredVector, currentVector; // vectors of previous frame
         // nullvector idk what to explain about it, it has no size, nor direction...
         Vector3D nullVector = new Vector3D(0, 0, 0);
         bool resetting = true, resetDone = false;
@@ -132,35 +132,36 @@ namespace IngameScript
                 {
                     return;
                 }
+                desiredVector = Gun.WorldMatrix.Forward;
             }
             if (setup && !_commandLine.Switch("resetGun"))
             {
                 debugLCD.WriteText("\n idk b: " + idk, true);
                 debugLCD.WriteText("\n DONE", true);
-                return;
+                //return;
                 // set previous vectors
                 // on the first run (2nd tick) the x,y,z vectors haven't been set yet, so they are nullVectors
-                xp = (x == nullVector) ? Gun.WorldMatrix.Forward : x;
-                yp = (y == nullVector) ? Gun.WorldMatrix.Right : y;
-                zp = (z == nullVector) ? Gun.WorldMatrix.Up : z;
+                //xp = (x == nullVector) ? Gun.WorldMatrix.Forward : x;
+                //yp = (y == nullVector) ? Gun.WorldMatrix.Right : y;
+                //zp = (z == nullVector) ? Gun.WorldMatrix.Up : z;
                 // set current vectors
                 // uses the cockpits directions to claculate deltas
-                x = Gun.WorldMatrix.Forward;
-                y = Gun.WorldMatrix.Right;
-                z = Gun.WorldMatrix.Up;
+                currentVector = Gun.WorldMatrix.Forward;
+                //y = Gun.WorldMatrix.Right;
+                //z = Gun.WorldMatrix.Up;
 
                 // deltas
                 // claculates how much the cockpit(vehicle body) has turned since last frame
-                double dx = GetADif(xp, x);
-                double dy = GetADif(yp, y);
-                double dz = GetADif(zp, z);
+                //double dx = GetADif(xp, x);
+                //double dy = GetADif(yp, y);
+                //double dz = GetADif(zp, z);
 
                 // accumulative difference
                 // basically, over time, these variables well, vary in size
                 // uses Sin & Cos to enable stabilization even when not looking forward                                      //this bit here checks if the vehicle turned up or down
-                aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
+                //aVertDifference += ((Math.Cos(Horiz.Angle) * (dx + dz - dy) + Math.Sin(Horiz.Angle) * (dy + dz - dx)) / 2) * (GetADif(x, zp) < GetADif(xp, zp) ? 1 : -1);
                 //                                      //this bit here checks if the vehicle turned right or left
-                aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
+                //aHorizDifference += (dx + dy - dz) / 2 * (GetADif(xp, y) > GetADif(xp, yp) ? 1 : -1);
 
                 // sets user input
                 userHoriz = Cockpit.RotationIndicator.Y * sensitivity;
@@ -168,29 +169,30 @@ namespace IngameScript
                 angleHoriz += userHoriz;
                 angleVert -= userVert;
 
-                AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
-                AngleHoriz(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
-
-                //debugLCD.WriteText("", false);
-                //debugLCD.WriteText("\n Vert.Angle: " + ToDeg(Vert.Angle), true);
-                //debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
-                //debugLCD.WriteText("\n", true);
-                //debugLCD.WriteText("\n Vert.Velocity: " + Vert.TargetVelocityRPM, true);
-                //debugLCD.WriteText("\n Horiz.Velocity: " + Horiz.TargetVelocityRPM, true);
-                //debugLCD.WriteText("\n", true);
-                //debugLCD.WriteText("\n original: " + vOriginal, true);
-                //debugLCD.WriteText("\n current: " + x, true);
-                //debugLCD.WriteText("\n", true);
-                //// dot = 1 when close
-                //// cross = 0,0,0 when close
+                debugLCD.WriteText("", false);
+                debugLCD.WriteText("\n Vert.Angle: " + ToDeg(Vert.Angle), true);
+                debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
+                debugLCD.WriteText("\n", true);
+                debugLCD.WriteText("\n Vert.Velocity: " + Vert.TargetVelocityRPM, true);
+                debugLCD.WriteText("\n Horiz.Velocity: " + Horiz.TargetVelocityRPM, true);
+                debugLCD.WriteText("\n", true);
+                debugLCD.WriteText("\n desiredVector: " + desiredVector, true);
+                debugLCD.WriteText("\n currentVector: " + currentVector, true);
+                debugLCD.WriteText("\n AngleBetween: " + AngleBetween(desiredVector, currentVector), true);
+                debugLCD.WriteText("\n", true);
+                // dot = 1 when close
+                // cross = 0,0,0 when close
                 //debugLCD.WriteText("\n dot: " + Vector3D.Dot(vOriginal, x), true);
                 //debugLCD.WriteText("\n cross: " + Vector3D.Cross(vOriginal, x), true);
-                //
-                //debugLCD.WriteText("\n", true);
-                //debugLCD.WriteText("\n c.rot: " + Cockpit.RotationIndicator, true);
+                debugLCD.WriteText("\n c.rot: " + Cockpit.RotationIndicator, true);
 
-                //Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
-                //Angle(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
+
+                //AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
+                //AngleHoriz(Horiz, (-aHorizDifference + angleHoriz), limitLeft, limitRight);
+                Angle(Vert, limitDown, limitUp, true);
+                Angle(Horiz, limitLeft, limitRight, false);
+
+
 
                 timer++;
                 if (timer > 80) { timer = 0; }
@@ -255,19 +257,16 @@ namespace IngameScript
                     Horiz.TargetVelocityRad = ToRad(Clamp(0, 10, -hAngle)) * MathHelper.RadiansPerSecondToRPM;
                 }
             }
-            if (ToDeg(Vert.Angle) != verticalResetAngle)
+            float vAngle = ToDeg(Vert.Angle);
+            if (vAngle != verticalResetAngle)
             {
-                if (ToDeg(Vert.Angle) > verticalResetAngle)
+                if (vAngle > verticalResetAngle)
                 {
-                    //Vert.LowerLimitDeg = 0;
-                    //Vert.UpperLimitDeg = ToDeg(Vert.Angle);
-                    Vert.TargetVelocityRad = Clamp(-10, 0, -Vert.Angle) * MathHelper.RadiansPerSecondToRPM;
+                    Vert.TargetVelocityRad = Clamp(-10, 0, -vAngle) * MathHelper.RadiansPerSecondToRPM;
                 }
                 else
                 {
-                    //Vert.LowerLimitDeg = ToDeg(Vert.Angle);
-                    //Vert.UpperLimitDeg = 0;
-                    Vert.TargetVelocityRad = ToRad(Clamp(0, 10, -Vert.Angle)) * MathHelper.RadiansPerSecondToRPM;
+                    Vert.TargetVelocityRad = ToRad(Clamp(0, 10, -vAngle)) * MathHelper.RadiansPerSecondToRPM;
                 }
             }
             debugLCD.WriteText("\n", true);
@@ -285,25 +284,26 @@ namespace IngameScript
         }
         public bool IsResetDone()
         {
+            float limit = (float)0.01;
             debugLCD.WriteText("\n IsResetDone call: " + idk, true);
             debugLCD.WriteText("\n H.a: " + ToDeg(Horiz.Angle), true);
-            debugLCD.WriteText("\n if: " + (WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle)), true);
+            debugLCD.WriteText("\n if: " + (WithinN(ToDeg(Horiz.Angle), horizontalResetAngle, limit)), true);
             debugLCD.WriteText("\n", true);
             debugLCD.WriteText("\n V.a: " + ToDeg(Vert.Angle), true);
-            debugLCD.WriteText("\n if: " + (WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle)), true);
-            if (WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle))
+            debugLCD.WriteText("\n if: " + (WithinN(ToDeg(Vert.Angle), verticalResetAngle, limit)), true);
+            if (WithinN(ToDeg(Horiz.Angle), horizontalResetAngle, limit))
             {
                 Horiz.TargetVelocityRad = 0;
                 Horiz.LowerLimitDeg = float.MinValue;
                 Horiz.UpperLimitDeg = float.MaxValue;
             }
-            if (WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle))
+            if (WithinN(ToDeg(Vert.Angle), verticalResetAngle, limit))
             {
                 Vert.TargetVelocityRad = 0;
                 Vert.LowerLimitDeg = -90;
                 Vert.UpperLimitDeg = 90;
             }
-            return WithinPointOne(ToDeg(Horiz.Angle), horizontalResetAngle) && WithinPointOne(ToDeg(Vert.Angle), verticalResetAngle);
+            return WithinN(ToDeg(Horiz.Angle), horizontalResetAngle, limit) && WithinN(ToDeg(Vert.Angle), verticalResetAngle, limit);
         }
         public float Clamp(float min, float max, float num)
         {
@@ -311,9 +311,9 @@ namespace IngameScript
             if (num < min) { return min; }
             return num;
         }
-        bool WithinPointOne(float a, float b)
+        bool WithinN(float a, float b, float limit)
         {
-            if (Math.Abs(a - b) < 0.1) { return true; }
+            if (Math.Abs(a - b) < limit) { return true; }
             return false;
         }
         float ToDeg(float rad)
@@ -323,6 +323,72 @@ namespace IngameScript
         float ToRad(float deg)
         {
             return MathHelper.ToRadians(deg);
+        }
+        public static Vector3D Rejection(Vector3D a, Vector3D b)
+        {
+            if (Vector3D.IsZero(a) || Vector3D.IsZero(b))
+                return Vector3D.Zero;
+
+            return a - a.Dot(b) / b.LengthSquared() * b;
+        }
+        double VanglePrev = 0;
+        double HanglePrev = 0;
+        void Angle(IMyMotorStator rotor, double minAngle, double maxAngle, bool v)
+        {
+            //double dot = Vector3D.Dot(desiredVector, currentVector);
+
+            //Angle(Vert, limitDown, limitUp);
+            //Angle(Horiz, limitLeft, limitRight);
+
+            Vector3D desiredDirectionFlat = Rejection(desiredVector, rotor.WorldMatrix.Up);
+            Vector3D currentDirectionFlat = Rejection(currentVector, rotor.WorldMatrix.Up);
+            double angle = AngleBetween(desiredDirectionFlat, currentDirectionFlat);
+            debugLCD.WriteText("\n", true);
+            debugLCD.WriteText("\n angle: " + angle, true);
+            Vector3D axis = Vector3D.Cross(desiredVector, currentVector);
+            angle *= Math.Sign(Vector3D.Dot(axis, rotor.WorldMatrix.Up));
+            angle = GetAllowedRotationAngle(angle, rotor);
+            if (v)
+            {
+                double tmp = ToDeg((float)VanglePrev);
+                debugLCD.WriteText("\n VanglePrev: " + VanglePrev, true);
+                debugLCD.WriteText("\n tmp: " + tmp, true);
+                VanglePrev = angle;
+                //tmp = ((Math.Abs(tmp) < 1) ? Math.Pow(tmp, 2) : Math.Sqrt(Math.Abs(tmp))) * Math.Sign(tmp);
+                angle += tmp;
+            }
+            else
+            {
+                double tmp = ToDeg((float)HanglePrev);
+                debugLCD.WriteText("\n HanglePrev: " + HanglePrev, true);
+                debugLCD.WriteText("\n tmp: " + tmp, true);
+                HanglePrev = angle;
+                //tmp = ((Math.Abs(tmp) < 1) ? Math.Pow(tmp, 2) : Math.Sqrt(Math.Abs(tmp))) * Math.Sign(tmp);
+                angle += tmp;
+            }
+            //if (Math.Abs(angle) < 0.005) { angle = 0; }
+            //rotor.TargetVelocityRad = Clamp((float)-horizontalSpeedLimit, (float)horizontalSpeedLimit, (float)angle * MathHelper.RadiansPerSecondToRPM);
+            //rotor.TargetVelocityRad = (float)angle * MathHelper.RadiansPerSecondToRPM;
+            rotor.TargetVelocityRad = (float)angle;
+            debugLCD.WriteText("\n angle 4: " + angle, true);
+            debugLCD.WriteText("\n TargetVelocityDeg: " + ToDeg(rotor.TargetVelocityRad), true);
+        }
+        double GetAllowedRotationAngle(double desiredDelta, IMyMotorStator rotor)
+        {
+            double desiredAngle = rotor.Angle + desiredDelta;
+            if ((desiredAngle < rotor.LowerLimitRad && desiredAngle + MathHelper.TwoPi < rotor.UpperLimitRad)
+                || (desiredAngle > rotor.UpperLimitRad && desiredAngle - MathHelper.TwoPi > rotor.LowerLimitRad))
+            {
+                return -Math.Sign(desiredDelta) * (MathHelper.TwoPi - Math.Abs(desiredDelta));
+            }
+            return desiredDelta;
+        }
+        double AngleBetween(Vector3D a, Vector3D b)
+        {
+            if (Vector3D.IsZero(a) || Vector3D.IsZero(b))
+                return 0;
+            else
+                return Math.Acos(MathHelper.Clamp(a.Dot(b) / Math.Sqrt(a.LengthSquared() * b.LengthSquared()), -1, 1));
         }
         double ClampHSpeed(double number)
         {

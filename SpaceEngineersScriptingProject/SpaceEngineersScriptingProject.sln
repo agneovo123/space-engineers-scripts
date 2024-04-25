@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WEDGE", "WEDGE\WEDGE.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelControl", "WheelControl\WheelControl.csproj", "{96DA64EC-799C-4676-9036-D7BC3852B35B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCES reverse engineering", "TCES reverse engineering\TCES reverse engineering.csproj", "{77735120-E8C1-4BE3-9416-AA72F8D30505}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 plane gun stab v2", "2 plane gun stab v2\2 plane gun stab v2.csproj", "{F1E3D133-8F2C-40FF-B074-8A2FB427125E}"
 EndProject
 Global
@@ -71,14 +69,6 @@ Global
 		{96DA64EC-799C-4676-9036-D7BC3852B35B}.Release|Any CPU.Build.0 = Debug|x64
 		{96DA64EC-799C-4676-9036-D7BC3852B35B}.Release|x64.ActiveCfg = Debug|x64
 		{96DA64EC-799C-4676-9036-D7BC3852B35B}.Release|x64.Build.0 = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Debug|Any CPU.Build.0 = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Debug|x64.ActiveCfg = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Debug|x64.Build.0 = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Release|Any CPU.ActiveCfg = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Release|Any CPU.Build.0 = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Release|x64.ActiveCfg = Debug|x64
-		{77735120-E8C1-4BE3-9416-AA72F8D30505}.Release|x64.Build.0 = Debug|x64
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Debug|Any CPU.Build.0 = Debug|x64
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Debug|x64.ActiveCfg = Debug|x64
