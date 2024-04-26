@@ -145,7 +145,7 @@ namespace IngameScript
                 debugLCD.WriteText("\n", true);
                 //debugLCD.WriteText("\n userHoriz: " + userHoriz, true);
                 //debugLCD.WriteText("\n userVert: " + userVert, true);
-                debugLCD.WriteText("\n c.rot: " + Cockpit.RotationIndicator, true);
+                //debugLCD.WriteText("\n c.rot: " + Cockpit.RotationIndicator, true);
                 // dot = 1 when close
                 // cross = 0,0,0 when close
                 //debugLCD.WriteText("\n dot: " + Vector3D.Dot(vOriginal, x), true);
@@ -154,12 +154,12 @@ namespace IngameScript
                 if (Math.Abs(Cockpit.RotationIndicator.Y) > 0)
                 {
                     desiredVector = RotateAbout(desiredVector, Horiz.WorldMatrix.Up, ToRad(-userHoriz));
-                    debugLCD.WriteText("\n desiredVector H: " + desiredVector, true);
+                    //debugLCD.WriteText("\n desiredVector H: " + desiredVector, true);
                 }
                 if (Math.Abs(Cockpit.RotationIndicator.X) > 0)
                 {
                     desiredVector = RotateAbout(desiredVector, Vert.WorldMatrix.Up, ToRad(userVert));
-                    debugLCD.WriteText("\n desiredVector V: " + desiredVector, true);
+                    //debugLCD.WriteText("\n desiredVector V: " + desiredVector, true);
                 }
                 //Angle(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
                 //AngleVert(Vert, (-aVertDifference + angleVert), limitDown, limitUp);
@@ -321,7 +321,6 @@ namespace IngameScript
         double HanglePrev0 = 0;
         double HanglePrev1 = 0;
         double HanglePrev2 = 0;
-        double maxxxxxxx = 0;
         void Angle(IMyMotorStator rotor, double minAngle, double maxAngle, bool v)
         {
             //double dot = Vector3D.Dot(desiredVector, currentVector);
@@ -341,70 +340,84 @@ namespace IngameScript
             angle = GetAllowedRotationAngle(angle, rotor);
             if (v)
             {
-                double tmp = VanglePrev0;
                 double speed0 = VanglePrev1 - VanglePrev0;
                 double speed1 = VanglePrev2 - VanglePrev1;
                 double accel = speed0 - speed1;
                 double speedNext = speed0 + accel;
+                int angleInt = Convert.ToInt32(Math.Abs(ToDeg(angle)));
+                //double pointNext = ToDeg(angle) - (speedNext + angleInt * speedNext);
                 double pointNext = ToDeg(angle) - speedNext;
-                if (Math.Abs(ToDeg(angle)) < 0.05)
+                for (int i = 0; i < angleInt - 1 && i < 5; i++)
                 {
-                    pointNext = 0;
+                    speedNext += accel;
+                    pointNext -= speedNext;
                 }
                 //double pointNext = ToDeg(angle) + speedNext * Math.Sign(angle);
                 debugLCD.WriteText("\n VanglePrev2: " + VanglePrev2, true);
                 debugLCD.WriteText("\n VanglePrev1: " + VanglePrev1, true);
                 debugLCD.WriteText("\n VanglePrev0: " + VanglePrev0, true);
                 debugLCD.WriteText("\n V angle: " + ToDeg(angle), true);
-                //if (Math.Abs(ToDeg(angle)) > Math.Abs(maxxxxxxx))
-                //{
-                //    maxxxxxxx = ToDeg(angle);
-                //}
-                //debugLCD.WriteText("\n V angle max: " + maxxxxxxx, true);
                 debugLCD.WriteText("\n pointNext: " + pointNext, true);
                 debugLCD.WriteText("\n speed1: " + speed1, true);
                 debugLCD.WriteText("\n speed0: " + speed0, true);
                 debugLCD.WriteText("\n accel: " + accel, true);
-                //debugLCD.WriteText("\n tmp: " + tmp, true);
                 VanglePrev2 = VanglePrev1;
                 VanglePrev1 = VanglePrev0;
                 VanglePrev0 = ToDeg(angle);
-                if (Math.Abs(ToDeg(angle)) < 0.05)
-                {
-                    VanglePrev0 = 0;
-                }
-                //tmp = ((Math.Abs(tmp) < 1) ? Math.Pow(tmp, 2) : Math.Sqrt(Math.Abs(tmp))) * Math.Sign(tmp);
 
-                if (Math.Abs(pointNext) > Math.Abs(ToDeg(angle)))
+                //if (Math.Abs(pointNext) > Math.Abs(ToDeg(angle))){angle /= 2;}else{}
+                int signP = 1;
+                if (Math.Sign(pointNext) < 0)
                 {
-                    //angle -= tmp;
-                    //int sign = 1;
-                    //if (angle < 0) { sign = -1; }
-                    //angle = -sign * (Math.Abs(angle) - Math.Abs(pointNext));
-                    angle /= 2;
+                    signP = -1;
                 }
-                else
+                int signA = 1;
+                if (Math.Sign(angle) < 0)
                 {
-                    // happy state
-                    //angle += tmp;
-                    //angle = pointNext;
+                    signA = -1;
+                }
+
+                if (signA != signP)
+                {
+                    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
+                    angle = angle / 2;
+                    //angle = -angle;
                 }
             }
             else
-            {/*
-                double tmp = HanglePrev0;
-                debugLCD.WriteText("\n H angle: " + angle, true);
-                debugLCD.WriteText("\n HanglePrev0: " + HanglePrev0, true);
-                debugLCD.WriteText("\n HanglePrev1: " + HanglePrev1, true);
-                double speed0 = HanglePrev0 - angle;
-                double speed1 = HanglePrev1 - HanglePrev0;
-                debugLCD.WriteText("\n speed0: " + speed0, true);
-                debugLCD.WriteText("\n speed1: " + speed1, true);
-                debugLCD.WriteText("\n tmp: " + tmp, true);
+            {
+                double speed0 = HanglePrev1 - HanglePrev0;
+                double speed1 = HanglePrev2 - HanglePrev1;
+                double accel = speed0 - speed1;
+                double speedNext = speed0 + accel;
+                int angleInt = Convert.ToInt32(Math.Abs(ToDeg(angle)));
+                double pointNext = ToDeg(angle) - speedNext;
+                for (int i = 0; i < angleInt - 1 && i < 5; i++)
+                {
+                    speedNext += accel;
+                    pointNext -= speedNext;
+                }
+                HanglePrev2 = HanglePrev1;
                 HanglePrev1 = HanglePrev0;
                 HanglePrev0 = ToDeg(angle);
-                //tmp = ((Math.Abs(tmp) < 1) ? Math.Pow(tmp, 2) : Math.Sqrt(Math.Abs(tmp))) * Math.Sign(tmp);
-                //angle += tmp;*/
+
+                int signP = 1;
+                if (Math.Sign(pointNext) < 0)
+                {
+                    signP = -1;
+                }
+                int signA = 1;
+                if (Math.Sign(angle) < 0)
+                {
+                    signA = -1;
+                }
+
+                if (signA != signP)
+                {
+                    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
+                    angle = angle / 2;
+                    //angle = -angle;
+                }
             }
 
 
