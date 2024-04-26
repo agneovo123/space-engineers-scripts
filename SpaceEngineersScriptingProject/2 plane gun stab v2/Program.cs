@@ -135,13 +135,15 @@ namespace IngameScript
 
                 debugLCD.WriteText("", false);
                 debugLCD.WriteText(" Vert.Angle: " + ToDeg(Vert.Angle), true);
-                debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
-                debugLCD.WriteText("\n Vert.Velocity: " + Vert.TargetVelocityRPM, true);
-                debugLCD.WriteText("\n Horiz.Velocity: " + Horiz.TargetVelocityRPM, true);
+                debugLCD.WriteText("\ntarget angle V: " + ToDeg(AngleBetween(Vert.WorldMatrix.Left, desiredVector)), true);
+
+                //debugLCD.WriteText("\n Horiz.Angle: " + ToDeg(Horiz.Angle), true);
+                debugLCD.WriteText("\nVert.Velocity: " + Vert.TargetVelocityRPM, true);
+                //debugLCD.WriteText("\n Horiz.Velocity: " + Horiz.TargetVelocityRPM, true);
                 debugLCD.WriteText("\n", true);
-                debugLCD.WriteText("\n desiredVector: " + desiredVector, true);
-                debugLCD.WriteText("\n currentVector: " + currentVector, true);
-                debugLCD.WriteText("\n AngleBetween: " + ToDeg(AngleBetween(desiredVector, currentVector)), true);
+                //debugLCD.WriteText("\n desiredVector: " + desiredVector, true);
+                //debugLCD.WriteText("\n currentVector: " + currentVector, true);
+                debugLCD.WriteText("\nAngleBetween: " + ToDeg(AngleBetween(desiredVector, currentVector)), true);
                 debugLCD.WriteText("\n", true);
                 //debugLCD.WriteText("\n userHoriz: " + userHoriz, true);
                 //debugLCD.WriteText("\n userVert: " + userVert, true);
@@ -318,9 +320,11 @@ namespace IngameScript
         double VanglePrev0 = 0;
         double VanglePrev1 = 0;
         double VanglePrev2 = 0;
+        double VanglePrev3 = 0;
         double HanglePrev0 = 0;
         double HanglePrev1 = 0;
         double HanglePrev2 = 0;
+        double HanglePrev3 = 0;
         void Angle(IMyMotorStator rotor, double minAngle, double maxAngle, bool v)
         {
             //double dot = Vector3D.Dot(desiredVector, currentVector);
@@ -340,84 +344,109 @@ namespace IngameScript
             angle = GetAllowedRotationAngle(angle, rotor);
             if (v)
             {
-                double speed0 = VanglePrev1 - VanglePrev0;
-                double speed1 = VanglePrev2 - VanglePrev1;
-                double accel = speed0 - speed1;
-                double speedNext = speed0 + accel;
-                int angleInt = Convert.ToInt32(Math.Abs(ToDeg(angle)));
-                //double pointNext = ToDeg(angle) - (speedNext + angleInt * speedNext);
-                double pointNext = ToDeg(angle) - speedNext;
-                for (int i = 0; i < angleInt - 1 && i < 5; i++)
-                {
-                    speedNext += accel;
-                    pointNext -= speedNext;
-                }
-                //double pointNext = ToDeg(angle) + speedNext * Math.Sign(angle);
-                debugLCD.WriteText("\n VanglePrev2: " + VanglePrev2, true);
-                debugLCD.WriteText("\n VanglePrev1: " + VanglePrev1, true);
-                debugLCD.WriteText("\n VanglePrev0: " + VanglePrev0, true);
-                debugLCD.WriteText("\n V angle: " + ToDeg(angle), true);
-                debugLCD.WriteText("\n pointNext: " + pointNext, true);
-                debugLCD.WriteText("\n speed1: " + speed1, true);
-                debugLCD.WriteText("\n speed0: " + speed0, true);
-                debugLCD.WriteText("\n accel: " + accel, true);
-                VanglePrev2 = VanglePrev1;
-                VanglePrev1 = VanglePrev0;
-                VanglePrev0 = ToDeg(angle);
-
-                //if (Math.Abs(pointNext) > Math.Abs(ToDeg(angle))){angle /= 2;}else{}
-                int signP = 1;
-                if (Math.Sign(pointNext) < 0)
-                {
-                    signP = -1;
-                }
-                int signA = 1;
-                if (Math.Sign(angle) < 0)
-                {
-                    signA = -1;
-                }
-
-                if (signA != signP)
-                {
-                    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
-                    angle = angle / 2;
-                    //angle = -angle;
-                }
+                debugLCD.WriteText("\nV target angle: " + ToDeg(AngleBetween(rotor.WorldMatrix.Left, desiredDirectionFlat)), true);
+                //double speed0 = VanglePrev1 - VanglePrev0;
+                //double speed1 = VanglePrev2 - VanglePrev1;
+                //double speed2 = VanglePrev3 - VanglePrev2;
+                //double accel0 = speed0 - speed1;
+                //double accel1 = speed1 - speed2;
+                //double accelD = accel1 - accel0;
+                //double speedNext = speed0 + (accel0 + accelD);
+                //int angleInt = Convert.ToInt32(Math.Abs(speedNext));
+                ////double pointNext = ToDeg(angle) - (speedNext + angleInt * speedNext);
+                //double pointNext = ToDeg(angle) - speedNext;
+                ////for (int i = 0; i < angleInt - 1 && i < 5; i++)
+                ////{
+                ////    //accel0 += accelD;
+                ////    speedNext += accel0;
+                ////    pointNext -= speedNext;
+                ////}
+                ////double pointNext = ToDeg(angle) + speedNext * Math.Sign(angle);
+                //debugLCD.WriteText("\n VanglePrev3: " + VanglePrev3, true);
+                //debugLCD.WriteText("\n VanglePrev2: " + VanglePrev2, true);
+                //debugLCD.WriteText("\n VanglePrev1: " + VanglePrev1, true);
+                //debugLCD.WriteText("\n VanglePrev0: " + VanglePrev0, true);
+                //debugLCD.WriteText("\n V angle: " + ToDeg(angle), true);
+                //debugLCD.WriteText("\n pointNext: " + pointNext, true);
+                //debugLCD.WriteText("\n speed2: " + speed2, true);
+                //debugLCD.WriteText("\n speed1: " + speed1, true);
+                //debugLCD.WriteText("\n speed0: " + speed0, true);
+                //debugLCD.WriteText("\n speedNext: " + speedNext, true);
+                //debugLCD.WriteText("\n accel1: " + accel1, true);
+                //debugLCD.WriteText("\n accel0: " + accel0, true);
+                //VanglePrev3 = VanglePrev2;
+                //VanglePrev2 = VanglePrev1;
+                //VanglePrev1 = VanglePrev0;
+                //if (Math.Abs(angle) < 0.005) { angle = 0; }
+                //VanglePrev0 = ToDeg(angle);
+                //
+                ////if (Math.Abs(pointNext) > Math.Abs(ToDeg(angle))){angle /= 2;}else{}
+                //int signP = 1;
+                //if (Math.Sign(pointNext) < 0)
+                //{
+                //    signP = -1;
+                //}
+                //int signP3 = 1;
+                //if (Math.Sign(VanglePrev3) < 0)
+                //{
+                //    signP3 = -1;
+                //}
+                //int signA = 1;
+                //if (Math.Sign(angle) < 0)
+                //{
+                //    signA = -1;
+                //}
+                //
+                //if (signA != signP /*|| signA != signP3*/)
+                //{
+                //    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
+                //    //angle = angle / 2;
+                //    //angle = 0;
+                //    //angle = pointNext;
+                //    //angle = -angle / 2;
+                //    angle = -angle;
+                //    //angle = angle / (angleInt == 0 ? 1 : angleInt);
+                //}
+                //debugLCD.WriteText("\n angleFinal: " + (angle * 60), true);
+                angle = angle / 60;
             }
             else
             {
-                double speed0 = HanglePrev1 - HanglePrev0;
-                double speed1 = HanglePrev2 - HanglePrev1;
-                double accel = speed0 - speed1;
-                double speedNext = speed0 + accel;
-                int angleInt = Convert.ToInt32(Math.Abs(ToDeg(angle)));
-                double pointNext = ToDeg(angle) - speedNext;
-                for (int i = 0; i < angleInt - 1 && i < 5; i++)
-                {
-                    speedNext += accel;
-                    pointNext -= speedNext;
-                }
-                HanglePrev2 = HanglePrev1;
-                HanglePrev1 = HanglePrev0;
-                HanglePrev0 = ToDeg(angle);
-
-                int signP = 1;
-                if (Math.Sign(pointNext) < 0)
-                {
-                    signP = -1;
-                }
-                int signA = 1;
-                if (Math.Sign(angle) < 0)
-                {
-                    signA = -1;
-                }
-
-                if (signA != signP)
-                {
-                    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
-                    angle = angle / 2;
-                    //angle = -angle;
-                }
+                debugLCD.WriteText("\nH target angle: " + ToDeg(AngleBetween(RotateAbout(rotor.WorldMatrix.Left, rotor.WorldMatrix.Up, ToRad(-90)), desiredDirectionFlat)), true);
+                //double speed0 = HanglePrev1 - HanglePrev0;
+                //double speed1 = HanglePrev2 - HanglePrev1;
+                //double accel = speed0 - speed1;
+                //double speedNext = speed0 + accel;
+                //int angleInt = Convert.ToInt32(Math.Abs(ToDeg(angle)));
+                //double pointNext = ToDeg(angle) - speedNext;
+                //for (int i = 0; i < angleInt - 1 && i < 5; i++)
+                //{
+                //    speedNext += accel;
+                //    pointNext -= speedNext;
+                //}
+                //HanglePrev2 = HanglePrev1;
+                //HanglePrev1 = HanglePrev0;
+                //HanglePrev0 = ToDeg(angle);
+                //
+                //int signP = 1;
+                //if (Math.Sign(pointNext) < 0)
+                //{
+                //    signP = -1;
+                //}
+                //int signA = 1;
+                //if (Math.Sign(angle) < 0)
+                //{
+                //    signA = -1;
+                //}
+                //
+                //if (signA != signP)
+                //{
+                //    debugLCD.WriteText("\n AAAAAAAAAAAAAAAAA", true);
+                //    angle = angle / 2;
+                //    //angle = -angle;
+                //}
+                //angle = angle / 60;
+                angle = 0;
             }
 
 
@@ -427,7 +456,8 @@ namespace IngameScript
 
             //rotor.TargetVelocityRad = (float)angle / 10;
             //rotor.TargetVelocityRad = ToRad((float)angle * 60);
-            rotor.TargetVelocityRad = ((float)angle * 60);
+            //rotor.TargetVelocityRad = ((float)angle * 60);
+            rotor.TargetVelocityRPM = ((float)angle * 60 * 60);
             //rotor.TargetVelocityRad = (float)angle;
             //debugLCD.WriteText("\n angle 4: " + angle, true);
             //debugLCD.WriteText("\n TargetVelocityDeg: " + ToDeg(rotor.TargetVelocityRad), true);
