@@ -17,13 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelControl", "WheelContro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2 plane gun stab v2", "2 plane gun stab v2\2 plane gun stab v2.csproj", "{F1E3D133-8F2C-40FF-B074-8A2FB427125E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tces thing", "tces thing\tces thing.csproj", "{BBBD1EE2-2482-4467-A352-EB6C163D35BE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThrustVectorMSL", "ThrustVectorMSL\ThrustVectorMSL.csproj", "{B642DC34-CC73-4F3E-A81F-37828CD28D9B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThrustGyroMSL", "ThrustGyroMSL\ThrustGyroMSL.csproj", "{B9B0DE16-8C9A-4B97-9AB2-BC77DFC144B2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rdav's Guided Missile Script", "Rdav's Guided Missile Script\Rdav's Guided Missile Script.csproj", "{CE059287-6B9D-47FD-ABCD-030C945752F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,14 +81,6 @@ Global
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Release|Any CPU.Build.0 = Debug|x64
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Release|x64.ActiveCfg = Debug|x64
 		{F1E3D133-8F2C-40FF-B074-8A2FB427125E}.Release|x64.Build.0 = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Debug|Any CPU.Build.0 = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Debug|x64.ActiveCfg = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Debug|x64.Build.0 = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Release|Any CPU.ActiveCfg = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Release|Any CPU.Build.0 = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Release|x64.ActiveCfg = Debug|x64
-		{BBBD1EE2-2482-4467-A352-EB6C163D35BE}.Release|x64.Build.0 = Debug|x64
 		{B642DC34-CC73-4F3E-A81F-37828CD28D9B}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{B642DC34-CC73-4F3E-A81F-37828CD28D9B}.Debug|Any CPU.Build.0 = Debug|x64
 		{B642DC34-CC73-4F3E-A81F-37828CD28D9B}.Debug|x64.ActiveCfg = Debug|x64
@@ -109,14 +97,6 @@ Global
 		{B9B0DE16-8C9A-4B97-9AB2-BC77DFC144B2}.Release|Any CPU.Build.0 = Debug|x64
 		{B9B0DE16-8C9A-4B97-9AB2-BC77DFC144B2}.Release|x64.ActiveCfg = Debug|x64
 		{B9B0DE16-8C9A-4B97-9AB2-BC77DFC144B2}.Release|x64.Build.0 = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Debug|Any CPU.ActiveCfg = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Debug|Any CPU.Build.0 = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Debug|x64.ActiveCfg = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Debug|x64.Build.0 = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Release|Any CPU.ActiveCfg = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Release|Any CPU.Build.0 = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Release|x64.ActiveCfg = Debug|x64
-		{CE059287-6B9D-47FD-ABCD-030C945752F5}.Release|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

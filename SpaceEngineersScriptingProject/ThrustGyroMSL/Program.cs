@@ -39,7 +39,7 @@ namespace IngameScript
         List<MISSILE> MISSILES = new List<MISSILE>();
         bool missileOut = false; // is there a missile in the air?
         int missileTimer = 0; // ticks since launch
-        int guidanceDelay = 0; // wait untill this much time has passed before activating the guidance (60 = 1 second)
+        int guidanceDelay = 120; // wait untill this much time has passed before activating the guidance (60 = 1 second)
         //Consts
         double Global_Timestep = 0.016;
         const double _45_deg = Math.PI / 4; // 45 degrees in radians;; The max allowed 'tilt' of the missile (per axis)
@@ -165,9 +165,9 @@ namespace IngameScript
         /// </summary>
         void LaunchMissile()
         {
-            //MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
             //MISSILES[0].THRUSTER.ThrustOverride = 35000;
-            //MISSILES[0].MERGE.ApplyAction("OnOff_Off");
+            MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
+            MISSILES[0].MERGE.ApplyAction("OnOff_Off");
             MISSILES[0].GYRO.GyroOverride = true;
             MISSILES[0].LAUNCHED = true;
             missileOut = true;
@@ -224,26 +224,31 @@ namespace IngameScript
             aim_dir = WorldToBody(aim_dir, This_Missile.THRUSTER);
             VEcho("AD_b: ", aim_dir);
 
-            ///DEBUG
-            msl_travel = aim_dir;
 
             //VEcho("msl_pos", msl_pos);
             //VEcho("aim", aimpoint);
 
+            /// TODO:
+            /// Compensate gravity
+
             //Vector3D thruster_right = This_Missile.THRUSTER.WorldMatrix.Right;
             Vector3D thruster_right = WorldToBody(This_Missile.THRUSTER.WorldMatrix.Right, This_Missile.THRUSTER);
-            Vector3D thruster_up = This_Missile.THRUSTER.WorldMatrix.Up;
+            Vector3D thruster_up = WorldToBody(This_Missile.THRUSTER.WorldMatrix.Up, This_Missile.THRUSTER);
 
             double roll; double pitch = 0;
             float g_roll = AngleGyro(msl_forwards, thruster_right, msl_travel, aim_dir, This_Missile.PREV_Roll, out roll);
-            //float pitch = (float)AngleGyro(msl_forwards, thruster_up, msl_travel, aim_dir, This_Missile.PREV_pitch, out pitch);
+            float g_pitch = AngleGyro(msl_forwards, thruster_up, msl_travel, aim_dir, This_Missile.PREV_Pitch, out pitch);
             Echo(String.Format("Roll: {0:N2}", roll));
             Echo(String.Format("g_roll: {0:N2}", g_roll));
+            Echo(String.Format("pitch: {0:N2}", pitch));
+            Echo(String.Format("g_pitch: {0:N2}", g_pitch));
             debugLCD.WriteText("\n" + String.Format("Roll: {0:N2}", roll), true);
             debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
-            //Echo("pitch: " + pitch);
+            debugLCD.WriteText("\n" + String.Format("pitch: {0:N2}", pitch), true);
+            debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
+
             This_Missile.GYRO.Roll = g_roll;
-            //This_Missile.GYRO.Pitch = (float)pitch;
+            This_Missile.GYRO.Pitch = g_pitch;
 
             //Updates For Next Tick Round
             This_Missile.target_pos_prev = target_pos;
