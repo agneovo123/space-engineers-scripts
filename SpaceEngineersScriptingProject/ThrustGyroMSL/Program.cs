@@ -28,8 +28,8 @@ namespace IngameScript
         ////////////////////////////////////////////////////////////////
         //         inspired by Rdav's Guided Missile Script           //
         ////////////////////////////////////////////////////////////////
-
         string MissileTag = "[SRM]";
+        bool UseAdvancedTargetting = true;
         // custom turret controller
         IMyTurretControlBlock Turret = null;
         IMyShipController RC;
@@ -201,17 +201,23 @@ namespace IngameScript
             // get target distance
             double target_distance = (msl_pos - target_pos).Length();
 
-            //// 1st iterations of look-ahead calculations
-            //double msl_time = TimeToReach(msl_vel, msl_accel, target_distance);
-            //double target_travel_distance = TraveledDistance(target_vel, target_accel, msl_time);
-            //Vector3D aimpoint = target_pos + (target_dir * target_travel_distance);
-            //// 2nd iteration
-            //target_distance = (msl_pos - aimpoint).Length();
-            //// 2 cycles of look-ahead calculations
-            //msl_time = TimeToReach(msl_vel, msl_accel, target_distance);
-            //target_travel_distance = TraveledDistance(target_vel, target_accel, msl_time);
-            //aimpoint = target_pos + (target_dir * target_travel_distance);
-
+            if (UseAdvancedTargetting)
+            {
+                double t = AdvancedPreditction_T(target_pos, target_dir, target_accel, target_vel, msl_pos, msl_accel, msl_vel);
+            }
+            else
+            {
+                //// 1st iterations of look-ahead calculations
+                //double msl_time = TimeToReach(msl_vel, msl_accel, target_distance);
+                //double target_travel_distance = TraveledDistance(target_vel, target_accel, msl_time);
+                //Vector3D aimpoint = target_pos + (target_dir * target_travel_distance);
+                //// 2nd iteration
+                //target_distance = (msl_pos - aimpoint).Length();
+                //// 2 cycles of look-ahead calculations
+                //msl_time = TimeToReach(msl_vel, msl_accel, target_distance);
+                //target_travel_distance = TraveledDistance(target_vel, target_accel, msl_time);
+                //aimpoint = target_pos + (target_dir * target_travel_distance);
+            }
 
             // set rotation
             // a.k.a: we have the aimpoint, from here, it's the vector angly bit that needs coding
@@ -238,14 +244,14 @@ namespace IngameScript
             double roll; double pitch = 0;
             float g_roll = AngleGyro(msl_forwards, thruster_right, msl_travel, aim_dir, This_Missile.PREV_Roll, out roll);
             float g_pitch = AngleGyro(msl_forwards, thruster_up, msl_travel, aim_dir, This_Missile.PREV_Pitch, out pitch);
-            Echo(String.Format("Roll: {0:N2}", roll));
-            Echo(String.Format("g_roll: {0:N2}", g_roll));
-            Echo(String.Format("pitch: {0:N2}", pitch));
-            Echo(String.Format("g_pitch: {0:N2}", g_pitch));
-            debugLCD.WriteText("\n" + String.Format("Roll: {0:N2}", roll), true);
-            debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
-            debugLCD.WriteText("\n" + String.Format("pitch: {0:N2}", pitch), true);
-            debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
+            //Echo(String.Format("Roll: {0:N2}", roll));
+            //Echo(String.Format("g_roll: {0:N2}", g_roll));
+            //Echo(String.Format("pitch: {0:N2}", pitch));
+            //Echo(String.Format("g_pitch: {0:N2}", g_pitch));
+            //debugLCD.WriteText("\n" + String.Format("Roll: {0:N2}", roll), true);
+            //debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
+            //debugLCD.WriteText("\n" + String.Format("pitch: {0:N2}", pitch), true);
+            //debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
 
             This_Missile.GYRO.Roll = g_roll;
             This_Missile.GYRO.Pitch = g_pitch;
@@ -266,8 +272,8 @@ namespace IngameScript
         }
         void VEcho(string str, Vector3D v)
         {
-            Echo(String.Format("{0}: {1:N3};{2:N3};{3:N3}", str, v.X, v.Y, v.Z));
-            debugLCD.WriteText("\n" + String.Format("{0}: {1:N3};{2:N3};{3:N3}", str, v.X, v.Y, v.Z), true);
+            //Echo(String.Format("{0}: {1:N3};{2:N3};{3:N3}", str, v.X, v.Y, v.Z));
+            //debugLCD.WriteText("\n" + String.Format("{0}: {1:N3};{2:N3};{3:N3}", str, v.X, v.Y, v.Z), true);
         }
         float AngleGyro(Vector3D msl_forwards, Vector3D thruster_vector, Vector3D msl_travel, Vector3D aim_dir, double oldAngle, out double newAngle)
         {
@@ -315,18 +321,18 @@ namespace IngameScript
             //double g_speed = beta_distance * MathHelper.RadiansPerSecondToRPM;
             double g_speed = beta_distance;
 
-            Echo(String.Format("alpha: {0:N2}", ToDeg(alpha)));
-            Echo(String.Format("beta: {0:N2}", ToDeg(beta)));
-            Echo(String.Format("gamma: {0:N2}", ToDeg(beta)));
-            Echo(String.Format("beta_target: {0:N2}", ToDeg(beta_target)));
-            Echo(String.Format("beta_distance: {0:N2}", ToDeg(beta_distance)));
-            Echo(String.Format("g_speed: {0:N2}\n", g_speed));
-            debugLCD.WriteText("\n" + String.Format("alpha: {0:N2}", ToDeg(alpha)), true);
-            debugLCD.WriteText("\n" + String.Format("beta: {0:N2}", ToDeg(beta)), true);
-            debugLCD.WriteText("\n" + String.Format("gamma: {0:N2}", ToDeg(beta)), true);
-            debugLCD.WriteText("\n" + String.Format("beta_target: {0:N2}", ToDeg(beta_target)), true);
-            debugLCD.WriteText("\n" + String.Format("beta_distance: {0:N2}", ToDeg(beta_distance)), true);
-            debugLCD.WriteText("\n" + String.Format("g_speed: {0:N2}\n", g_speed), true);
+            //Echo(String.Format("alpha: {0:N2}", ToDeg(alpha)));
+            //Echo(String.Format("beta: {0:N2}", ToDeg(beta)));
+            //Echo(String.Format("gamma: {0:N2}", ToDeg(beta)));
+            //Echo(String.Format("beta_target: {0:N2}", ToDeg(beta_target)));
+            //Echo(String.Format("beta_distance: {0:N2}", ToDeg(beta_distance)));
+            //Echo(String.Format("g_speed: {0:N2}\n", g_speed));
+            //debugLCD.WriteText("\n" + String.Format("alpha: {0:N2}", ToDeg(alpha)), true);
+            //debugLCD.WriteText("\n" + String.Format("beta: {0:N2}", ToDeg(beta)), true);
+            //debugLCD.WriteText("\n" + String.Format("gamma: {0:N2}", ToDeg(beta)), true);
+            //debugLCD.WriteText("\n" + String.Format("beta_target: {0:N2}", ToDeg(beta_target)), true);
+            //debugLCD.WriteText("\n" + String.Format("beta_distance: {0:N2}", ToDeg(beta_distance)), true);
+            //debugLCD.WriteText("\n" + String.Format("g_speed: {0:N2}\n", g_speed), true);
 
             //VEcho("MF: ", msl_forwards);
             //VEcho("MT: ", msl_travel);
@@ -336,19 +342,19 @@ namespace IngameScript
             VEcho("r-AD: ", rejected_AD);
             VEcho("TR: ", thruster_vector);
             VEcho("TR': ", thruster_vector_back);
-            Echo(String.Format("AD-TR: {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector)));
-            Echo(String.Format("AD-TR': {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector_back)));
-            Echo("AD-TR' < AD-TR: " + (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector)));
-            debugLCD.WriteText("\n" + String.Format("AD-TR: {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector)), true);
-            debugLCD.WriteText("\n" + String.Format("AD-TR': {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector_back)), true);
-            debugLCD.WriteText("\n" + "AD-TR' < AD-TR: " + (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector)), true);
+            //Echo(String.Format("AD-TR: {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector)));
+            //Echo(String.Format("AD-TR': {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector_back)));
+            //Echo("AD-TR' < AD-TR: " + (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector)));
+            //debugLCD.WriteText("\n" + String.Format("AD-TR: {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector)), true);
+            //debugLCD.WriteText("\n" + String.Format("AD-TR': {0:N2}", Vector3D.Angle(rejected_AD, thruster_vector_back)), true);
+            //debugLCD.WriteText("\n" + "AD-TR' < AD-TR: " + (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector)), true);
 
             // S
             if (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector))
             { g_speed *= -1; }
 
-            Echo(String.Format("g_speed 2: {0:N2}", ToDeg(g_speed)));
-            debugLCD.WriteText("\n" + String.Format("g_speed 2: {0:N2}", ToDeg(g_speed)), true);
+            //Echo(String.Format("g_speed 2: {0:N2}", ToDeg(g_speed)));
+            //debugLCD.WriteText("\n" + String.Format("g_speed 2: {0:N2}", ToDeg(g_speed)), true);
 
             //GYRO.Roll = (float)(g_speed * g_dir);
             //return (float)MathHelper.Clamp(g_speed, -1000, 1000);
@@ -380,6 +386,148 @@ namespace IngameScript
             // Convert worldDirection into a local direction
             V = Vector3D.TransformNormal(V, MatrixD.Transpose(block.WorldMatrix.GetOrientation()));
             return Vector3D.Normalize(V);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="P0">Enemy Pos</param>
+        /// <param name="V0">Enemy Heading</param>
+        /// <param name="A0">Enemy Acceleration</param>
+        /// <param name="U0">Enemy Speed</param>
+        /// <param name="P1">Missile Pos</param>
+        /// <param name="A1">Missile Acceleration</param>
+        /// <param name="U1">Missile Speed</param>
+        /// <returns>time untill impact</returns>
+        double AdvancedPreditction_T(Vector3D P0, Vector3D V0, double A0, double U0, Vector3D P1, double A1, double U1)
+        {
+            // move target and msl vectors such that msl is at {1,1,1}
+            double P1dx = 1 - P1.X;
+            double P1dy = 1 - P1.Y;
+            double P1dz = 1 - P1.Z;
+            P1.X += P1dx;
+            P1.Y += P1dy;
+            P1.Z += P1dz;
+
+            P0.X += P1dx;
+            P0.Y += P1dy;
+            P0.Z += P1dz;
+
+            P0 /= 100;
+            V0 /= 100;
+            A0 /= 100;
+            U0 /= 100;
+            P1 /= 100;
+            A1 /= 100;
+            U1 /= 100;
+
+            debugLCD.WriteText("\n" + String.Format("V0: {0}", V0), true);
+            /*
+            The expanded formula for target prediction in 3D with linear acceleration
+            2P0.X ^ 2 + 4P0.X* V0.X* U0*T + 2P0.X* A0*V0.X * T ^ 2 + 2U0 * V0.X * T + A0 * V0.X * T ^ 2 - 4 * P1.X * P0.X + 4 * P1.X * U0 * V0.X * T + 2 * P1.X * A0 * V0.X * T ^ 2 +
+            2P0.Y ^ 2 + 4P0.Y* V0.Y* U0*T + 2P0.Y* A0*V0.Y * T ^ 2 + 2U0 * V0.Y * T + A0 * V0.Y * T ^ 2 - 4 * P1.Y * P0.Y + 4 * P1.Y * U0 * V0.Y * T + 2 * P1.Y * A0 * V0.Y * T ^ 2 +
+            2P0.Z ^ 2 + 4P0.Z* V0.Z* U0*T + 2P0.Z* A0*V0.Z * T ^ 2 + 2U0 * V0.Z * T + A0 * V0.Z * T ^ 2 - 4 * P1.Z * P0.Z + 4 * P1.Z * U0 * V0.Z * T + 2 * P1.Z * A0 * V0.Z * T ^ 2
+            - 2U1 * T ^ 2 - 2U1 * A1 * T ^ 3 - (A1 ^ 2 * T ^ 4) / 2 = 0
+            */
+            // quartic formula https://en.wikipedia.org/wiki/Quartic_function
+
+            double a = -(A1 * A1) / 2;
+            double b = -2 * U1 * A1;
+            double c = -2 * U1
+            + 2 * P0.X * A0 * V0.X
+            + 2 * P0.Y * A0 * V0.Y
+            + 2 * P0.Z * A0 * V0.Z
+            + A0 * V0.X
+            + A0 * V0.Y
+            + A0 * V0.Z
+            + 2 * P1.X * A0 * V0.X
+            + 2 * P1.Y * A0 * V0.Y
+            + 2 * P1.Z * A0 * V0.Z;
+            double d = +4 * P0.X * V0.X * U0
+            + 4 * P0.Y * V0.Y * U0
+            + 4 * P0.Z * V0.Z * U0
+            + 2 * U0 * V0.X
+            + 2 * U0 * V0.Y
+            + 2 * U0 * V0.Z
+            + 4 * P1.X * U0 * V0.X
+            + 4 * P1.Y * U0 * V0.Y
+            + 4 * P1.Z * U0 * V0.Z;
+            double e = +2 * P0.X * P0.X
+            + 2 * P0.Y * P0.Y
+            + 2 * P0.Z * P0.Z
+            - 4 * P1.X * P0.X
+            - 4 * P1.Y * P0.Y
+            - 4 * P1.Z * P0.Z;
+
+
+            double p = (8 * a * c - 3 * b * b) / (8 * a * a);
+            double q = (b * b * b - 4 * a * b * c + 8 * a * a * d) / (8 * a * a * a);
+
+            double a2 = a * a;
+            double b2 = b * b;
+            double c2 = c * c;
+            double d2 = d * d;
+            double e2 = e * e;
+
+            double a3 = a * a * a;
+            double b3 = b * b * b;
+            double c3 = c * c * c;
+            double d3 = d * d * d;
+            double e3 = e * e * e;
+
+            double a4 = a2 * a2;
+            double b4 = b2 * a2;
+            double c4 = c2 * a2;
+            double d4 = d2 * a2;
+            double e4 = e2 * a2;
+
+
+
+
+
+            // https://wikimedia.org/api/rest_v1/media/math/render/svg/654adf3cf7f9d0750b278d62a52014c015f6e22a
+            double delta = 256 * a3 * e3 - 192 * a2 * b * d * e2 - 128 * a2 * c2 * e2 + 144 * a2 * c * d2 * e - 27 * a2 * d4
+                + 144 * a * b2 * c * e2 - 6 * a * b2 * d2 * e - 80 * a * b * c2 * d * e + 18 * a * b * c * d3 + 16 * a * c4 * e
+                - 4 * a * c3 * d2 - 27 * b4 * e2 + 18 * b3 * c * d * e - 4 * b3 * d3 - 4 * b2 * c3 * e + b2 * c2 * d2;
+            double delta0 = c * c - 3 * b * d + 12 * a * e;
+            double delta1 = 2 * c * c * c - 9 * b * c * d + 27 * b * b * e + 27 * a * d * d - 72 * a * c * e;
+
+            //Q = Math.Pow((delta1 + Math.Sqrt(delta2_1 - 4 * delta3_0)) / 2, 1 / 3);
+            double Q = Math.Pow((delta1 + Math.Sqrt(-27 * delta)) / 2, 1 / 3);
+
+            double S = (1 / 2) * Math.Sqrt((-2 / 3) * p + (1 / (3 * a)) * (Q + delta0 / Q));
+
+            double[] x = new double[4];
+            x[0] = -b / (4 * a) - S + (1 / 2) * Math.Sqrt(-4 * S * S - 2 * p + q / S);
+            x[1] = -b / (4 * a) - S - (1 / 2) * Math.Sqrt(-4 * S * S - 2 * p + q / S);
+            x[2] = -b / (4 * a) + S + (1 / 2) * Math.Sqrt(-4 * S * S - 2 * p - q / S);
+            x[3] = -b / (4 * a) + S - (1 / 2) * Math.Sqrt(-4 * S * S - 2 * p - q / S);
+
+            debugLCD.WriteText("\n" + String.Format("a: {0:N2}", a), true);
+            debugLCD.WriteText("\n" + String.Format("b: {0:N2}", b), true);
+            debugLCD.WriteText("\n" + String.Format("c: {0:N2}", c), true);
+            debugLCD.WriteText("\n" + String.Format("d: {0:N2}", d), true);
+            debugLCD.WriteText("\n" + String.Format("e: {0:N2}", e), true);
+
+            debugLCD.WriteText("\n" + String.Format("p: {0:N2}", p), true);
+            debugLCD.WriteText("\n" + String.Format("q: {0:N2}", q), true);
+            debugLCD.WriteText("\n" + String.Format("delta: {0:N2}", delta), true);
+            debugLCD.WriteText("\n" + String.Format("delta0: {0:N2}", delta0), true);
+            debugLCD.WriteText("\n" + String.Format("delta1: {0:N2}", delta1), true);
+            debugLCD.WriteText("\n" + String.Format("Q: {0:N2}", Q), true);
+            debugLCD.WriteText("\n" + String.Format("S: {0:N2}", S), true);
+            debugLCD.WriteText("\n" + String.Format("x[0]: {0:N2}", x[0]), true);
+            debugLCD.WriteText("\n" + String.Format("x[1]: {0:N2}", x[1]), true);
+            debugLCD.WriteText("\n" + String.Format("x[2]: {0:N2}", x[2]), true);
+            debugLCD.WriteText("\n" + String.Format("x[3]: {0:N2}", x[3]), true);
+
+
+            Array.Sort(x);
+            Echo("x[0]: " + x[0]);
+            Echo("x[1]: " + x[1]);
+            Echo("x[2]: " + x[2]);
+            Echo("x[3]: " + x[3]);
+
+            return 0;
         }
         /// <summary>
         /// Time it takes to go a set distance with linear acceleration
