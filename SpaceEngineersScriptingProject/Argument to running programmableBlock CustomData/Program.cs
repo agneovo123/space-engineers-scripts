@@ -23,7 +23,9 @@ namespace IngameScript
     partial class Program : MyGridProgram
     {
         #region mdk preserve
-        // Select your programmable block from a controller(cockpit/chair/etc)'s the G menu with the 'run' option.
+        // Select your programmable
+        // (updated, so it can be ANY functional block :)
+        // block from a controller(cockpit/chair/etc)'s the G menu with the 'run' option.
         // It will ask for arguments
         // note: arguments are separated with spaces ' ', if your programmable block has has spaces in it's name, just put it in quotes example: "Programmable Block Gun stab"
         // DO NOT use ';' in your arguments
@@ -39,6 +41,7 @@ namespace IngameScript
         MyCommandLine _commandLine = new MyCommandLine();
         public void Main(string argument, UpdateType updateSource)
         {
+            // I don't remember how these work O_o 2024-09-19
             if (_commandLine.TryParse(argument))
             {
                 if (_commandLine.Argument(0) == null)
@@ -77,14 +80,21 @@ namespace IngameScript
                 }
             }
 
-            IMyProgrammableBlock block = (IMyProgrammableBlock)GridTerminalSystem.GetBlockWithName(name);
+
+
+            //IMyProgrammableBlock block = (IMyProgrammableBlock)GridTerminalSystem.GetBlockWithName(name);
+            IMyTerminalBlock block = GridTerminalSystem.GetBlockWithName(name);
+            // check if block exists
             if (block == null)
             {
-                Echo("Programmable block with name \'" + name + "\' not found!");
+                Echo("Block with name \'" + name + "\' not found!");
             }
             else
             {
+                // send args to block's customData
                 block.CustomData = arguments;
+
+                // check if args got successfully sent
                 string validArgs = block.CustomData;
                 if (arguments == validArgs)
                 {
