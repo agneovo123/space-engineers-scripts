@@ -1,0 +1,79 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\Projects programs\\Projects\\_GitHub\\space-engineers-scripts\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject.csproj": {}
+  },
+  "projects": {
+    "E:\\Projects programs\\Projects\\_GitHub\\space-engineers-scripts\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\Projects programs\\Projects\\_GitHub\\space-engineers-scripts\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject.csproj",
+        "projectName": "SpaceEngineersScriptingProject",
+        "projectPath": "E:\\Projects programs\\Projects\\_GitHub\\space-engineers-scripts\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject.csproj",
+        "packagesPath": "C:\\Users\\Csaba\\.nuget\\packages\\",
+        "outputPath": "E:\\Projects programs\\Projects\\_GitHub\\space-engineers-scripts\\SpaceEngineersScriptingProject\\SpaceEngineersScriptingProject\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "D:\\Visual Studio\\Visual Studio Shared (components, tools ,SDKs)\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\Csaba\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netframework48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "targetAlias": "netframework48",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net48": {
+          "targetAlias": "netframework48",
+          "dependencies": {
+            "Mal.Mdk2.PbAnalyzers": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.1.11, )"
+            },
+            "Mal.Mdk2.PbPackager": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.1.1, )"
+            },
+            "Mal.Mdk2.References": {
+              "include": "Build",
+              "target": "Package",
+              "version": "[2.2.4, )"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -36,7 +36,7 @@ namespace IngameScript
         ////////////////////////////////////////////////////////////////////////////////
         //                 DO NOT EDIT ANYTHING BELOW THIS LINE                       //
         ////////////////////////////////////////////////////////////////////////////////
-        public Program(){}
+        public Program() { }
         #endregion
         MyCommandLine _commandLine = new MyCommandLine();
         public void Main(string argument, UpdateType updateSource)

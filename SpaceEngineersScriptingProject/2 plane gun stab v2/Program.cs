@@ -1,5 +1,4 @@
-﻿using Malware.MDKUtilities;
-using Sandbox.Game.EntityComponents;
+﻿using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -8,7 +7,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using VRage;
 using VRage.Collections;
@@ -19,7 +17,6 @@ using VRage.Game.ModAPI.Ingame;
 using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
-//using static VRage.Game.MyObjectBuilder_SessionComponentMission;
 
 namespace IngameScript
 {
@@ -362,11 +359,11 @@ namespace IngameScript
 
                 //if (Math.Abs(pointNext) > Math.Abs(ToDeg(angle))){angle /= 2;}else{}
                 int signP = 1;
-                if (Math.Sign(pointNext) < 0){signP = -1;}
+                if (Math.Sign(pointNext) < 0) { signP = -1; }
                 int signP3 = 1;
-                if (Math.Sign(VanglePrev3) < 0){signP3 = -1;}
+                if (Math.Sign(VanglePrev3) < 0) { signP3 = -1; }
                 int signA = 1;
-                if (Math.Sign(angle) < 0){signA = -1;}
+                if (Math.Sign(angle) < 0) { signA = -1; }
 
                 if (signA != signP)
                 {
