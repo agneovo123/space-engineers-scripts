@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RotorSuspension", "RotorSus
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HingeSuspension", "HingeSuspension\HingeSuspension.csproj", "{08AFBD69-182B-40AB-8ED6-90744485C75B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PistonSuspension", "PistonSuspension\PistonSuspension.csproj", "{A1FB49A2-B72A-4842-96F8-C8FDBAB8DF22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThrustGyroMSL_v2", "ThrustGyroMSL_v2\ThrustGyroMSL_v2.csproj", "{1001D98A-633F-4DE2-8F14-1D9F46184364}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -87,6 +91,14 @@ Global
 		{08AFBD69-182B-40AB-8ED6-90744485C75B}.Debug|x64.Build.0 = Debug|x64
 		{08AFBD69-182B-40AB-8ED6-90744485C75B}.Release|x64.ActiveCfg = Release|x64
 		{08AFBD69-182B-40AB-8ED6-90744485C75B}.Release|x64.Build.0 = Release|x64
+		{A1FB49A2-B72A-4842-96F8-C8FDBAB8DF22}.Debug|x64.ActiveCfg = Debug|x64
+		{A1FB49A2-B72A-4842-96F8-C8FDBAB8DF22}.Debug|x64.Build.0 = Debug|x64
+		{A1FB49A2-B72A-4842-96F8-C8FDBAB8DF22}.Release|x64.ActiveCfg = Release|x64
+		{A1FB49A2-B72A-4842-96F8-C8FDBAB8DF22}.Release|x64.Build.0 = Release|x64
+		{1001D98A-633F-4DE2-8F14-1D9F46184364}.Debug|x64.ActiveCfg = Debug|x64
+		{1001D98A-633F-4DE2-8F14-1D9F46184364}.Debug|x64.Build.0 = Debug|x64
+		{1001D98A-633F-4DE2-8F14-1D9F46184364}.Release|x64.ActiveCfg = Release|x64
+		{1001D98A-633F-4DE2-8F14-1D9F46184364}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
