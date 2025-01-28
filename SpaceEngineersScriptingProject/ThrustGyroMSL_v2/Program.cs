@@ -42,7 +42,8 @@ namespace IngameScript
         const double I = 0; // comulative error (i don't know how to use this)
         const double D = 0.3; // damping gain
 
-        PID PIDmsl = new PID(P, I, D, 0);
+        PID PIDroll = new PID(P, I, D, 0);
+        PID PIDpitch = new PID(P, I, D, 0);
 
         // PID DEBUG
         // const double GAIN = 1.3;
@@ -242,8 +243,8 @@ namespace IngameScript
         /// </summary>
         void LaunchMissile()
         {
-            MISSILES[0].THRUSTER.ThrustOverride = 0;
-            MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
+            //MISSILES[0].THRUSTER.ThrustOverride = 0;
+            //MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
 
             MISSILES[0].MERGE.ApplyAction("OnOff_Off");
             MISSILES[0].GYRO.GyroOverride = true;
@@ -320,22 +321,23 @@ namespace IngameScript
             Vector3D thruster_up = WorldToBody(This_Missile.THRUSTER.WorldMatrix.Up, This_Missile.THRUSTER);
 
             float g_roll = AngleError(msl_forwards, thruster_right, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
-            //float g_pitch = AngleError(msl_forwards, thruster_up, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
+            float g_pitch = AngleError(msl_forwards, thruster_up, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
 
             //debugLCD.WriteText("\n" + String.Format("Roll: {0:N2}", roll), true);
             //debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
             //debugLCD.WriteText("\n" + String.Format("pitch: {0:N2}", pitch), true);
             //debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
 
-            float rollCmd = (float)-PIDmsl.getDriveCommandFromError(g_roll);
-            //float pitchCmd = (float)-PIDmsl.getDriveCommandFromError(g_pitch);
+            float rollCmd = (float)-PIDroll.getDriveCommandFromError(g_roll);
+            float pitchCmd = (float)-PIDpitch.getDriveCommandFromError(g_pitch);
 
             This_Missile.GYRO.Roll = rollCmd;
-            //This_Missile.GYRO.Pitch = pitchCmd;
+            This_Missile.GYRO.Pitch = pitchCmd;
 
             debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
             debugLCD.WriteText("\n" + String.Format("rollCmd: {0:N2}", rollCmd), true);
-            //debugLCD.WriteText("\n" + String.Format("pitchCmd: {0}", pitchCmd), true);
+            debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
+            debugLCD.WriteText("\n" + String.Format("pitchCmd: {0:N2}", pitchCmd), true);
 
 
             // Updates For Next Tick Round
