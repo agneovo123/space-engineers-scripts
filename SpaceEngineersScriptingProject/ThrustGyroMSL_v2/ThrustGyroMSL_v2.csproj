@@ -4,7 +4,7 @@
     <RootNamespace>IngameScript</RootNamespace>
     <LangVersion>6</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Configurations>Release;Debug</Configurations>
+    <Configurations>Release;Debug;no exec after build</Configurations>
     <Platforms>x64</Platforms>
   </PropertyGroup>
   <ItemGroup>

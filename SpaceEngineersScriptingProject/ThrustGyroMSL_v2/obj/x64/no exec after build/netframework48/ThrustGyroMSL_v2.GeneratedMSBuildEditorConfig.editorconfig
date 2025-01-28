@@ -1,6 +1,8 @@
 is_global = true
-build_property.RootNamespace = IngameScript
 build_property.ProjectDir = E:\Projects programs\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\ThrustGyroMSL_v2\
+build_property.ProjectDir = E:\Projects programs\Projects\_GitHub\space-engineers-scripts\SpaceEngineersScriptingProject\ThrustGyroMSL_v2\
+build_property.Mdk-IgnorePaths = obj\**\*;MDK\**\*;**\*.debug.cs
+build_property.RootNamespace = IngameScript
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false

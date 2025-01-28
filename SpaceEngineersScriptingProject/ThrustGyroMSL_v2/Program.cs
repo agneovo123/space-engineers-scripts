@@ -20,7 +20,7 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 //using static SpaceEngineers.Game.VoiceChat.OpusDevice;
-using static VRage.Game.ModAPI.Ingame.Utilities.MyCommandLine;
+//using static VRage.Game.ModAPI.Ingame.Utilities.MyCommandLine;
 
 namespace IngameScript
 {
@@ -98,7 +98,7 @@ namespace IngameScript
             double error;
             double integral; // idk
             double derivative;
-            double errorPrev;
+            double errorPrev = 0;
 
             double KP;
             double KI;
@@ -114,8 +114,6 @@ namespace IngameScript
             }
             public double getDriveCommandFromError(double Error)
             {
-                // update errorprev
-                errorPrev = error;
                 // update error
                 error = Error;
                 // update integral
@@ -123,9 +121,12 @@ namespace IngameScript
                 // update derivative
                 //derivative = CurrentValue + (KD * InverseTimestep) * (errorPrev - error); // why did I add to CV, and *KD ??? what
                 derivative = InverseTimestep * (errorPrev - error);
+                // update errorprev
+                errorPrev = error;
 
                 // create driveCommand
-                double driveCommand = -(KP * error + KI * integral + KD * derivative);
+                //double driveCommand = -(KP * error + KI * integral + KD * derivative);
+                double driveCommand = -(KP * error + KD * derivative);
                 //if (Math.Abs(error) < 0.01 && Math.Abs(driveCommand) < 0.01) { return 0; }
                 return driveCommand;
             }
@@ -241,8 +242,8 @@ namespace IngameScript
         /// </summary>
         void LaunchMissile()
         {
-            //MISSILES[0].THRUSTER.ThrustOverride = 35000;
-            //MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
+            MISSILES[0].THRUSTER.ThrustOverride = 0;
+            MISSILES[0].THRUSTER.ApplyAction("OnOff_On");
 
             MISSILES[0].MERGE.ApplyAction("OnOff_Off");
             MISSILES[0].GYRO.GyroOverride = true;
@@ -318,18 +319,24 @@ namespace IngameScript
             Vector3D thruster_right = WorldToBody(This_Missile.THRUSTER.WorldMatrix.Right, This_Missile.THRUSTER);
             Vector3D thruster_up = WorldToBody(This_Missile.THRUSTER.WorldMatrix.Up, This_Missile.THRUSTER);
 
-            //float g_roll = AngleGyro(msl_forwards, thruster_right, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
-            //float g_pitch = AngleGyro(msl_forwards, thruster_up, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
             float g_roll = AngleError(msl_forwards, thruster_right, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
-            float g_pitch = AngleError(msl_forwards, thruster_up, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
+            //float g_pitch = AngleError(msl_forwards, thruster_up, msl_travel, msl_travel_len, aim_dir, gravity, This_Missile.THRUSTER);
+
             //debugLCD.WriteText("\n" + String.Format("Roll: {0:N2}", roll), true);
             //debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
             //debugLCD.WriteText("\n" + String.Format("pitch: {0:N2}", pitch), true);
             //debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
 
+            float rollCmd = (float)-PIDmsl.getDriveCommandFromError(g_roll);
+            //float pitchCmd = (float)-PIDmsl.getDriveCommandFromError(g_pitch);
 
-            This_Missile.GYRO.Roll = (float)-PIDmsl.getDriveCommandFromError(g_roll);
-            This_Missile.GYRO.Pitch = (float)-PIDmsl.getDriveCommandFromError(g_pitch);
+            This_Missile.GYRO.Roll = rollCmd;
+            //This_Missile.GYRO.Pitch = pitchCmd;
+
+            debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
+            debugLCD.WriteText("\n" + String.Format("rollCmd: {0:N2}", rollCmd), true);
+            //debugLCD.WriteText("\n" + String.Format("pitchCmd: {0}", pitchCmd), true);
+
 
             // Updates For Next Tick Round
             This_Missile.target_pos_prev = target_pos;
@@ -473,51 +480,6 @@ namespace IngameScript
                 beta_distance = Math.Abs(beta_target - beta);
             }
 
-            // only do gravity calculations if we're in gravity
-            if (gravity.Length() > 0)
-            {
-                double grav_len = gravity.Length();
-                gravity = WorldToBody(RC.GetNaturalGravity(), refBlock) * grav_len;
-                rejected_Grav = Rejection(gravity, MFT_normal) * Timestep;
-                //rejected_Grav = Rejection(gravity, MFT_normal);
-                //debugLCD.WriteText("\n" + String.Format("grav_len: {0:N2}", grav_len), true);
-                //debugLCD.WriteText("\n" + String.Format("gravity: {0:N2}", gravity.Length()), true);
-                //debugLCD.WriteText("\n" + String.Format("rejected_Grav: {0:N2}", rejected_Grav.Length()), true);
-                //debugLCD.WriteText("\n" + String.Format("msl_travel_len: {0:N2}", msl_travel_len), true);
-
-                // the angle to (almost) cancel the effect of gravity
-                // this is okay, because the missile will have fins (significant because: Aerodynamic physics mod)
-                //double gravAngle = Vector3D.Angle(rejected_AD, rejected_AD + (-rejected_Grav));
-
-                // trig thing
-                double gravAngle = Asin(grav_len / rejected_AD.Length());
-
-                //double gravAngle1 = Vector3D.Angle(rejected_AD, rejected_AD + rejected_Grav);
-                //double gravAngle2 = Vector3D.Angle(rejected_AD, rejected_AD + (-rejected_Grav));
-                ////double gravAngle = (gravAngle1 > gravAngle2) ? gravAngle1 : gravAngle2;
-                ////double gravAngle = gravAngle1;
-                //double gravAngle = gravAngle2;
-
-
-                /// TODO: Gravity might need to be multiplied by Global_Timestep
-                double grav_MFAngle = Vector3D.Angle(msl_forwards, rejected_Grav);
-                double grav_MF_Angle = grav_MFAngle + beta_distance;
-                //debugLCD.WriteText("\n" + String.Format("gravAngle: {0:N2}", gravAngle), true);
-                if (ToDeg(grav_MF_Angle) > 180)
-                { grav_MF_Angle = ToRad(360) - grav_MF_Angle; }
-
-                // adjust the desired direction (beta_distance) based on MF and MF' vectors' angles compared to gravity
-
-
-                if (grav_MFAngle < grav_MF_Angle)
-                { beta_distance -= gravAngle; }
-                else
-                { beta_distance += gravAngle; }
-                //debugLCD.WriteText("\ncorr:", true);
-                //debugLCD.WriteText("\n" + String.Format("grav_MFAngle: {0:N2}", grav_MFAngle), true);
-                //debugLCD.WriteText("\n" + String.Format("grav_MF_Angle: {0:N2}", grav_MF_Angle), true);
-            }
-
             ///  //Post Setting Factors
             ///  NewYaw = ShipForwardAzimuth;
             ///  NewPitch = ShipForwardElevation;
@@ -536,7 +498,10 @@ namespace IngameScript
             //debugLCD.WriteText("\n" + String.Format("gamma: {0:N2}", ToDeg(beta)), true);
             //debugLCD.WriteText("\n" + String.Format("beta_target: {0:N2}", ToDeg(beta_target)), true);
             debugLCD.WriteText("\n" + String.Format("beta_distance: {0:N2}", ToDeg(beta_distance)), true);
-            debugLCD.WriteText("\n" + String.Format("g_speed: {0:N2}\n", g_speed), true);
+            debugLCD.WriteText("\n" + String.Format("g_speed: {0:N2}", g_speed), true);
+            debugLCD.WriteText("\n" + String.Format("thruster_vector: {0:N2},{1:N2},{2:N2}", thruster_vector.X, thruster_vector.Y, thruster_vector.Z), true);
+            debugLCD.WriteText("\n" + String.Format("msl_forwards: {0:N2},{1:N2},{2:N2}", msl_forwards.X, msl_forwards.Y, msl_forwards.Z), true);
+            debugLCD.WriteText("\n" + String.Format("MFT_normal: {0:N2},{1:N2},{2:N2}", MFT_normal.X, MFT_normal.Y, MFT_normal.Z), true);
 
             //VEcho("MF: ", msl_forwards);
             //VEcho("MT: ", msl_travel);
@@ -554,6 +519,7 @@ namespace IngameScript
             //debugLCD.WriteText("\n" + "AD-TR' < AD-TR: " + (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector)), true);
 
             // S (why no description?)
+            // ??? reverse turn direction when angle of attack > 90 ???
             if (Vector3D.Angle(rejected_AD, thruster_vector_back) < Vector3D.Angle(rejected_AD, thruster_vector))
             { g_speed *= -1; }
 
