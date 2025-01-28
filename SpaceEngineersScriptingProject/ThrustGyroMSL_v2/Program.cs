@@ -287,7 +287,7 @@ namespace IngameScript
 
             Vector3D aimpoint = GetInterCeptionPoint(msl_pos, msl_vel, target_pos, target_travel);
             ///DEBUG
-            aimpoint = target_pos;
+            //aimpoint = target_pos;
 
             // set rotation
             // a.k.a: we have the aimpoint, from here, it's the vector angly bit that needs coding
@@ -334,10 +334,8 @@ namespace IngameScript
             This_Missile.GYRO.Roll = rollCmd;
             This_Missile.GYRO.Pitch = pitchCmd;
 
-            debugLCD.WriteText("\n" + String.Format("g_roll: {0:N2}", g_roll), true);
-            debugLCD.WriteText("\n" + String.Format("rollCmd: {0:N2}", rollCmd), true);
-            debugLCD.WriteText("\n" + String.Format("g_pitch: {0:N2}", g_pitch), true);
-            debugLCD.WriteText("\n" + String.Format("pitchCmd: {0:N2}", pitchCmd), true);
+            debugLCD.WriteText("\n" + String.Format("rollCmd: {0:N2}", rollCmd * MathHelper.RadiansPerSecondToRPM), true);
+            debugLCD.WriteText("\n" + String.Format("pitchCmd: {0:N2}", pitchCmd * MathHelper.RadiansPerSecondToRPM), true);
 
 
             // Updates For Next Tick Round
